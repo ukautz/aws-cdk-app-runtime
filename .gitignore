@@ -1,0 +1,16 @@
+*.js
+!jest.config.js
+!prettier.config.js
+*.d.ts
+node_modules
+
+# CDK asset staging directory
+.cdk.staging
+cdk.out
+cdk.out.example-service
+cdk.context.json
+coverage/
+.npmrc
+*.tgz
+dist/
+.vscode

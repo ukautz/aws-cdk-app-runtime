@@ -1,0 +1,127 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Service Specs Service Store Encrypted to Ssm Matches Snapshot 1`] = `
+Object {
+  "Resources": Object {
+    "ClusterSpecD8C9F318": Object {
+      "Properties": Object {
+        "Name": "/prefixed/cluster",
+        "Type": "SecureString",
+        "Value": "cluster",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "IamPrincipalSpec6C2077B5": Object {
+      "Properties": Object {
+        "Name": "/prefixed/iamPrincipal",
+        "Type": "SecureString",
+        "Value": "iamPrincipal",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "PrivateHostnameSpec3227E9D6": Object {
+      "Properties": Object {
+        "Name": "/prefixed/privateHostname",
+        "Type": "SecureString",
+        "Value": "privateHostname",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "PublicHostnameSpec6DD71BF0": Object {
+      "Properties": Object {
+        "Name": "/prefixed/publicHostname",
+        "Type": "SecureString",
+        "Value": "publicHostname",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "ResourcesSpec1B6B0F2A": Object {
+      "Properties": Object {
+        "Name": "/prefixed/resources",
+        "Type": "SecureString",
+        "Value": "resources",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "SecurityGroupIdsSpec5B6C3A31": Object {
+      "Properties": Object {
+        "Name": "/prefixed/securityGroupIds",
+        "Type": "SecureString",
+        "Value": "securityGroupIds",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "ServiceSpec5B11C641": Object {
+      "Properties": Object {
+        "Name": "/prefixed/service",
+        "Type": "SecureString",
+        "Value": "service",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+  },
+}
+`;
+
+exports[`Service Specs Service Store to Ssm Matches Snapshot 1`] = `
+Object {
+  "Resources": Object {
+    "ClusterSpecD8C9F318": Object {
+      "Properties": Object {
+        "Name": "/prefixed/cluster",
+        "Type": "String",
+        "Value": "cluster",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "IamPrincipalSpec6C2077B5": Object {
+      "Properties": Object {
+        "Name": "/prefixed/iamPrincipal",
+        "Type": "String",
+        "Value": "iamPrincipal",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "PrivateHostnameSpec3227E9D6": Object {
+      "Properties": Object {
+        "Name": "/prefixed/privateHostname",
+        "Type": "String",
+        "Value": "privateHostname",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "PublicHostnameSpec6DD71BF0": Object {
+      "Properties": Object {
+        "Name": "/prefixed/publicHostname",
+        "Type": "String",
+        "Value": "publicHostname",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "ResourcesSpec1B6B0F2A": Object {
+      "Properties": Object {
+        "Name": "/prefixed/resources",
+        "Type": "String",
+        "Value": "resources",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "SecurityGroupIdsSpec5B6C3A31": Object {
+      "Properties": Object {
+        "Name": "/prefixed/securityGroupIds",
+        "Type": "String",
+        "Value": "securityGroupIds",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "ServiceSpec5B11C641": Object {
+      "Properties": Object {
+        "Name": "/prefixed/service",
+        "Type": "String",
+        "Value": "service",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+  },
+}
+`;

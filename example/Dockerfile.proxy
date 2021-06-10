@@ -1,0 +1,23 @@
+FROM nginx
+
+ARG publicDomain
+ARG privateDomain
+
+RUN echo "\n\
+upstream backend {\n\
+  server        webapp.${privateDomain}:80;\n\
+}\n\
+\n\
+server {\n\
+  listen        80;\n\
+  server_name   proxyapp.${publicDomain};\n\
+  location / {\n\
+    proxy_set_header Host webapp.${publicDomain};\n\
+    proxy_set_header X-Real-IP \$remote_addr;\n\
+    proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;\n\
+    proxy_pass http://backend/charts;\n\
+  }\n\
+}\n\
+" > /etc/nginx/conf.d/proxy.conf
+RUN cat /etc/nginx/conf.d/proxy.conf
+

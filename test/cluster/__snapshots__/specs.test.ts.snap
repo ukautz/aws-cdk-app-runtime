@@ -1,0 +1,335 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Specs Cluster Store Encrypted to Ssm Matches Snapshot 1`] = `
+Object {
+  "Resources": Object {
+    "AvailabilityZonesSpec9E4B3187": Object {
+      "Properties": Object {
+        "Name": "/prefixed/availabilityZones",
+        "Type": "SecureString",
+        "Value": "availabilityZones",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "ClusterArnSpec575C9810": Object {
+      "Properties": Object {
+        "Name": "/prefixed/clusterArn",
+        "Type": "SecureString",
+        "Value": "clusterArn",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "ClusterNameSpecE20605BB": Object {
+      "Properties": Object {
+        "Name": "/prefixed/clusterName",
+        "Type": "SecureString",
+        "Value": "clusterName",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "NamespaceArnSpec9EB19FED": Object {
+      "Properties": Object {
+        "Name": "/prefixed/namespaceArn",
+        "Type": "SecureString",
+        "Value": "namespaceArn",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "NamespaceIdSpecBFA4A494": Object {
+      "Properties": Object {
+        "Name": "/prefixed/namespaceId",
+        "Type": "SecureString",
+        "Value": "namespaceId",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "NamespaceNameSpecB3BB8809": Object {
+      "Properties": Object {
+        "Name": "/prefixed/namespaceName",
+        "Type": "SecureString",
+        "Value": "namespaceName",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "PrivateDomainSpec895E9A72": Object {
+      "Properties": Object {
+        "Name": "/prefixed/privateDomain",
+        "Type": "SecureString",
+        "Value": "privateDomain",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "PublicDomainSpecD88DC9DD": Object {
+      "Properties": Object {
+        "Name": "/prefixed/publicDomain",
+        "Type": "SecureString",
+        "Value": "publicDomain",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "RouterArnSpecA6735D98": Object {
+      "Properties": Object {
+        "Name": "/prefixed/routerArn",
+        "Type": "SecureString",
+        "Value": "routerArn",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "RouterCertificateArnSpec7CF705EB": Object {
+      "Properties": Object {
+        "Name": "/prefixed/routerCertificateArn",
+        "Type": "SecureString",
+        "Value": "routerCertificateArn",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "RouterLoadBalancerArnSpec7857920B": Object {
+      "Properties": Object {
+        "Name": "/prefixed/routerLoadBalancerArn",
+        "Type": "SecureString",
+        "Value": "routerLoadBalancerArn",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "RouterLoadBalancerDnsNameSpec38B41CDB": Object {
+      "Properties": Object {
+        "Name": "/prefixed/routerLoadBalancerDnsName",
+        "Type": "SecureString",
+        "Value": "routerLoadBalancerDnsName",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "RouterLoadBalancerSecurityGroupIdSpec86735FD5": Object {
+      "Properties": Object {
+        "Name": "/prefixed/routerLoadBalancerSecurityGroupId",
+        "Type": "SecureString",
+        "Value": "routerLoadBalancerSecurityGroupId",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "RouterRoleArnSpec568B75F8": Object {
+      "Properties": Object {
+        "Name": "/prefixed/routerRoleArn",
+        "Type": "SecureString",
+        "Value": "routerRoleArn",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "RouterSecurityGroupIdsSpec721726F2": Object {
+      "Properties": Object {
+        "Name": "/prefixed/routerSecurityGroupIds",
+        "Type": "SecureString",
+        "Value": "routerSecurityGroupIds",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "RouterTaskDefinitionArnSpec129A4FBC": Object {
+      "Properties": Object {
+        "Name": "/prefixed/routerTaskDefinitionArn",
+        "Type": "SecureString",
+        "Value": "routerTaskDefinitionArn",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "VpcIdSpec0C86AA6B": Object {
+      "Properties": Object {
+        "Name": "/prefixed/vpcId",
+        "Type": "SecureString",
+        "Value": "vpcId",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "ZoneArnSpec22EE4B29": Object {
+      "Properties": Object {
+        "Name": "/prefixed/zoneArn",
+        "Type": "SecureString",
+        "Value": "zoneArn",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "ZoneIdSpecB68C855E": Object {
+      "Properties": Object {
+        "Name": "/prefixed/zoneId",
+        "Type": "SecureString",
+        "Value": "zoneId",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "ZoneNameSpec724EA8E0": Object {
+      "Properties": Object {
+        "Name": "/prefixed/zoneName",
+        "Type": "SecureString",
+        "Value": "zoneName",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+  },
+}
+`;
+
+exports[`Specs Cluster Store to Ssm Matches Snapshot 1`] = `
+Object {
+  "Resources": Object {
+    "AvailabilityZonesSpec9E4B3187": Object {
+      "Properties": Object {
+        "Name": "/prefixed/availabilityZones",
+        "Type": "String",
+        "Value": "availabilityZones",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "ClusterArnSpec575C9810": Object {
+      "Properties": Object {
+        "Name": "/prefixed/clusterArn",
+        "Type": "String",
+        "Value": "clusterArn",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "ClusterNameSpecE20605BB": Object {
+      "Properties": Object {
+        "Name": "/prefixed/clusterName",
+        "Type": "String",
+        "Value": "clusterName",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "NamespaceArnSpec9EB19FED": Object {
+      "Properties": Object {
+        "Name": "/prefixed/namespaceArn",
+        "Type": "String",
+        "Value": "namespaceArn",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "NamespaceIdSpecBFA4A494": Object {
+      "Properties": Object {
+        "Name": "/prefixed/namespaceId",
+        "Type": "String",
+        "Value": "namespaceId",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "NamespaceNameSpecB3BB8809": Object {
+      "Properties": Object {
+        "Name": "/prefixed/namespaceName",
+        "Type": "String",
+        "Value": "namespaceName",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "PrivateDomainSpec895E9A72": Object {
+      "Properties": Object {
+        "Name": "/prefixed/privateDomain",
+        "Type": "String",
+        "Value": "privateDomain",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "PublicDomainSpecD88DC9DD": Object {
+      "Properties": Object {
+        "Name": "/prefixed/publicDomain",
+        "Type": "String",
+        "Value": "publicDomain",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "RouterArnSpecA6735D98": Object {
+      "Properties": Object {
+        "Name": "/prefixed/routerArn",
+        "Type": "String",
+        "Value": "routerArn",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "RouterCertificateArnSpec7CF705EB": Object {
+      "Properties": Object {
+        "Name": "/prefixed/routerCertificateArn",
+        "Type": "String",
+        "Value": "routerCertificateArn",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "RouterLoadBalancerArnSpec7857920B": Object {
+      "Properties": Object {
+        "Name": "/prefixed/routerLoadBalancerArn",
+        "Type": "String",
+        "Value": "routerLoadBalancerArn",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "RouterLoadBalancerDnsNameSpec38B41CDB": Object {
+      "Properties": Object {
+        "Name": "/prefixed/routerLoadBalancerDnsName",
+        "Type": "String",
+        "Value": "routerLoadBalancerDnsName",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "RouterLoadBalancerSecurityGroupIdSpec86735FD5": Object {
+      "Properties": Object {
+        "Name": "/prefixed/routerLoadBalancerSecurityGroupId",
+        "Type": "String",
+        "Value": "routerLoadBalancerSecurityGroupId",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "RouterRoleArnSpec568B75F8": Object {
+      "Properties": Object {
+        "Name": "/prefixed/routerRoleArn",
+        "Type": "String",
+        "Value": "routerRoleArn",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "RouterSecurityGroupIdsSpec721726F2": Object {
+      "Properties": Object {
+        "Name": "/prefixed/routerSecurityGroupIds",
+        "Type": "String",
+        "Value": "routerSecurityGroupIds",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "RouterTaskDefinitionArnSpec129A4FBC": Object {
+      "Properties": Object {
+        "Name": "/prefixed/routerTaskDefinitionArn",
+        "Type": "String",
+        "Value": "routerTaskDefinitionArn",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "VpcIdSpec0C86AA6B": Object {
+      "Properties": Object {
+        "Name": "/prefixed/vpcId",
+        "Type": "String",
+        "Value": "vpcId",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "ZoneArnSpec22EE4B29": Object {
+      "Properties": Object {
+        "Name": "/prefixed/zoneArn",
+        "Type": "String",
+        "Value": "zoneArn",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "ZoneIdSpecB68C855E": Object {
+      "Properties": Object {
+        "Name": "/prefixed/zoneId",
+        "Type": "String",
+        "Value": "zoneId",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "ZoneNameSpec724EA8E0": Object {
+      "Properties": Object {
+        "Name": "/prefixed/zoneName",
+        "Type": "String",
+        "Value": "zoneName",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+  },
+}
+`;

@@ -1,0 +1,14 @@
+<html>
+    <head>
+        <title>All the charts</title>
+    </head>
+    <body>
+        <ul>
+        {{range .urls}}
+            <li>
+                <a href="{{if not $.noPrefix}}/charts{{end}}?url={{.}}">{{.}}</a>
+            </li>
+        {{end}}
+        </ul>
+    </body>
+</html>

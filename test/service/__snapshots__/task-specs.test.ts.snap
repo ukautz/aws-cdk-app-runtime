@@ -1,0 +1,111 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Task Specs Task Store Encrypted to Ssm Matches Snapshot 1`] = `
+Object {
+  "Resources": Object {
+    "ArnSpecE033A0CE": Object {
+      "Properties": Object {
+        "Name": "/prefixed/arn",
+        "Type": "SecureString",
+        "Value": "arn",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "ClusterSpecD8C9F318": Object {
+      "Properties": Object {
+        "Name": "/prefixed/cluster",
+        "Type": "SecureString",
+        "Value": "cluster",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "IamPrincipalSpec6C2077B5": Object {
+      "Properties": Object {
+        "Name": "/prefixed/iamPrincipal",
+        "Type": "SecureString",
+        "Value": "iamPrincipal",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "ResourcesSpec1B6B0F2A": Object {
+      "Properties": Object {
+        "Name": "/prefixed/resources",
+        "Type": "SecureString",
+        "Value": "resources",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "SecurityGroupIdsSpec5B6C3A31": Object {
+      "Properties": Object {
+        "Name": "/prefixed/securityGroupIds",
+        "Type": "SecureString",
+        "Value": "securityGroupIds",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "TaskSpecB01B854A": Object {
+      "Properties": Object {
+        "Name": "/prefixed/task",
+        "Type": "SecureString",
+        "Value": "task",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+  },
+}
+`;
+
+exports[`Task Specs Task Store to Ssm Matches Snapshot 1`] = `
+Object {
+  "Resources": Object {
+    "ArnSpecE033A0CE": Object {
+      "Properties": Object {
+        "Name": "/prefixed/arn",
+        "Type": "String",
+        "Value": "arn",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "ClusterSpecD8C9F318": Object {
+      "Properties": Object {
+        "Name": "/prefixed/cluster",
+        "Type": "String",
+        "Value": "cluster",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "IamPrincipalSpec6C2077B5": Object {
+      "Properties": Object {
+        "Name": "/prefixed/iamPrincipal",
+        "Type": "String",
+        "Value": "iamPrincipal",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "ResourcesSpec1B6B0F2A": Object {
+      "Properties": Object {
+        "Name": "/prefixed/resources",
+        "Type": "String",
+        "Value": "resources",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "SecurityGroupIdsSpec5B6C3A31": Object {
+      "Properties": Object {
+        "Name": "/prefixed/securityGroupIds",
+        "Type": "String",
+        "Value": "securityGroupIds",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "TaskSpecB01B854A": Object {
+      "Properties": Object {
+        "Name": "/prefixed/task",
+        "Type": "String",
+        "Value": "task",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+  },
+}
+`;
