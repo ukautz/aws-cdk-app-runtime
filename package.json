@@ -1,6 +1,6 @@
 {
   "name": "@ukautz/aws-cdk-app-runtime",
-  "version": "1.119.0-alpha1",
+  "version": "1.120.0-alpha1",
   "main": "dist/lib/index.js",
   "types": "dist/lib/index.d.ts",
   "scripts": {
@@ -13,7 +13,7 @@
     "package": "tar zcvf app-runtime-library.$(cat package.json | jq .version -r).tgz --transform 's+^+package/+' package.json dist/"
   },
   "devDependencies": {
-    "@aws-cdk/assert": "1.119.0",
+    "@aws-cdk/assert": "1.120.0",
     "@types/jest": "^26.0.10",
     "@types/node": "10.17.27",
     "aws-cdk": "1.87.0",
@@ -26,25 +26,25 @@
     "yargs": "^16.2.0"
   },
   "dependencies": {
-    "@aws-cdk/aws-ec2": "1.119.0",
-    "@aws-cdk/aws-ecs": "1.119.0",
-    "@aws-cdk/aws-ecs-patterns": "1.119.0",
-    "@aws-cdk/aws-elasticloadbalancingv2": "1.119.0",
-    "@aws-cdk/aws-iam": "1.119.0",
-    "@aws-cdk/aws-route53": "1.119.0",
-    "@aws-cdk/aws-servicediscovery": "1.119.0",
-    "@aws-cdk/core": "1.119.0",
+    "@aws-cdk/aws-ec2": "1.120.0",
+    "@aws-cdk/aws-ecs": "1.120.0",
+    "@aws-cdk/aws-ecs-patterns": "1.120.0",
+    "@aws-cdk/aws-elasticloadbalancingv2": "1.120.0",
+    "@aws-cdk/aws-iam": "1.120.0",
+    "@aws-cdk/aws-route53": "1.120.0",
+    "@aws-cdk/aws-servicediscovery": "1.120.0",
+    "@aws-cdk/core": "1.120.0",
     "source-map-support": "^0.5.16"
   },
   "peerDependencies": {
-    "@aws-cdk/aws-ec2": "1.119.0",
-    "@aws-cdk/aws-ecs": "1.119.0",
-    "@aws-cdk/aws-ecs-patterns": "1.119.0",
-    "@aws-cdk/aws-elasticloadbalancingv2": "1.119.0",
-    "@aws-cdk/aws-iam": "1.119.0",
-    "@aws-cdk/aws-route53": "1.119.0",
-    "@aws-cdk/aws-servicediscovery": "1.119.0",
-    "@aws-cdk/core": "1.119.0",
+    "@aws-cdk/aws-ec2": "1.120.0",
+    "@aws-cdk/aws-ecs": "1.120.0",
+    "@aws-cdk/aws-ecs-patterns": "1.120.0",
+    "@aws-cdk/aws-elasticloadbalancingv2": "1.120.0",
+    "@aws-cdk/aws-iam": "1.120.0",
+    "@aws-cdk/aws-route53": "1.120.0",
+    "@aws-cdk/aws-servicediscovery": "1.120.0",
+    "@aws-cdk/core": "1.120.0",
     "source-map-support": "^0.5.16"
   },
   "publishConfig": {
