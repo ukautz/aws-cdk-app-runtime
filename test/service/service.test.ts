@@ -1,31 +1,32 @@
-import * as cdk from '@aws-cdk/core';
-import * as ec2 from '@aws-cdk/aws-ec2';
-import * as ecs from '@aws-cdk/aws-ecs';
-import * as servicediscovery from '@aws-cdk/aws-servicediscovery';
-import '@aws-cdk/assert/jest';
-import { Service, ServiceProps } from '../../lib/service/index';
+import * as cdk from 'aws-cdk-lib';
+import { aws_ec2 as ec2, aws_ecs as ecs, aws_servicediscovery as servicediscovery } from 'aws-cdk-lib';
+import { Template } from 'aws-cdk-lib/assertions';
+import { Construct } from 'constructs';
 import { Specs as ClusterSpecs } from '../../lib/cluster/specs';
-import { expectSnapshot } from '../util';
-import { Resources } from '../../lib/util/resources';
 import { serviceSpecKeys } from '../../lib/service';
+import { Service, ServiceProps } from '../../lib/service/index';
+import { Resources } from '../../lib/util/resources';
+import { expectSnapshot } from '../util';
 
 describe('Runtime Service', () => {
   describe('Default', () => {
     const { stack, service } = setupStack();
-    expectSnapshot(stack);
-    expectEcsService(stack);
-    expectPrivateDns(stack);
+    const template = Template.fromStack(stack);
+    expectSnapshot(template);
+    expectEcsService(template);
+    expectPrivateDns(template);
     it('Contains all Specs', () => {
       expect(Object.keys(service.specs).sort()).toEqual(serviceSpecKeys.sort());
     });
   });
   describe('With logging', () => {
-    const { stack, service } = setupStack({
+    const { stack } = setupStack({
       logging: '/log-prefix/',
     });
-    expectSnapshot(stack);
-    expect(stack).toCountResources('AWS::Logs::LogGroup', 1);
-    expect(stack).toHaveResourceLike('AWS::ECS::TaskDefinition', {
+    const template = Template.fromStack(stack);
+    expectSnapshot(template);
+    template.resourceCountIs('AWS::Logs::LogGroup', 1);
+    template.hasResourceProperties('AWS::ECS::TaskDefinition', {
       ContainerDefinitions: [
         {
           LogConfiguration: {
@@ -42,20 +43,21 @@ describe('Runtime Service', () => {
     const { stack } = setupStack({
       resources: Resources.fromString('cpu: 1024, memory: 2048, min: 2, max: 4, target_cpu: 55'),
     });
-    expectSnapshot(stack);
-    expectEcsService(stack, {
+    const template = Template.fromStack(stack);
+    expectSnapshot(template);
+    expectEcsService(template, {
       taskProps: {
         Cpu: '1024',
         Memory: '2048',
       },
     });
-    expectPrivateDns(stack);
+    expectPrivateDns(template);
     test('Has auto scaling', () => {
-      expect(stack).toHaveResource('AWS::ApplicationAutoScaling::ScalableTarget', {
+      template.hasResourceProperties('AWS::ApplicationAutoScaling::ScalableTarget', {
         MinCapacity: 2,
         MaxCapacity: 4,
       });
-      expect(stack).toHaveResource('AWS::ApplicationAutoScaling::ScalingPolicy', {
+      template.hasResourceProperties('AWS::ApplicationAutoScaling::ScalingPolicy', {
         TargetTrackingScalingPolicyConfiguration: {
           PredefinedMetricSpecification: {
             PredefinedMetricType: 'ECSServiceAverageCPUUtilization',
@@ -68,12 +70,12 @@ describe('Runtime Service', () => {
 });
 
 function expectEcsService(
-  stack: cdk.Stack,
+  template: Template,
   props?: { taskProps?: Record<string, any>; serviceProps?: Record<string, any> }
 ) {
   test('Task definition is present', () => {
-    expect(stack).toCountResources('AWS::ECS::TaskDefinition', 1);
-    expect(stack).toHaveResourceLike('AWS::ECS::TaskDefinition', {
+    template.resourceCountIs('AWS::ECS::TaskDefinition', 1);
+    template.hasResourceProperties('AWS::ECS::TaskDefinition', {
       Cpu: '256',
       Memory: '512',
       ContainerDefinitions: [
@@ -85,17 +87,17 @@ function expectEcsService(
     });
   });
   test('ECS Fargate service is defined', () => {
-    expect(stack).toCountResources('AWS::ECS::Service', 1);
-    expect(stack).toHaveResource('AWS::ECS::Service', {
+    template.resourceCountIs('AWS::ECS::Service', 1);
+    template.hasResourceProperties('AWS::ECS::Service', {
       LaunchType: 'FARGATE',
       ...props?.serviceProps,
     });
   });
 }
 
-function expectPrivateDns(stack: cdk.Stack) {
+function expectPrivateDns(template: Template) {
   test('Private DNS is setup', () => {
-    expect(stack).toHaveResource('AWS::ServiceDiscovery::Service', {
+    template.hasResourceProperties('AWS::ServiceDiscovery::Service', {
       Name: 'service-name',
     });
   });
@@ -120,7 +122,7 @@ function setupStack(props?: Partial<ServiceProps>): { stack: cdk.Stack; service:
     name: 'service-name',
     image: 'my-app',
     imageVersion: 'v1.2.3',
-    cluster: (scope: cdk.Construct) => ({ cluster, specs }),
+    cluster: (_: Construct) => ({ cluster, specs }),
     public: true,
     containerPort: 80,
     ...props,

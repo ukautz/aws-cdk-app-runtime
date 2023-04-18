@@ -1,6 +1,5 @@
-import * as cdk from '@aws-cdk/core';
-import '@aws-cdk/assert/jest';
-import { countResources, expect as expectCDK } from '@aws-cdk/assert';
+import * as cdk from 'aws-cdk-lib';
+import { Template } from 'aws-cdk-lib/assertions';
 import { Cluster } from '../../lib/cluster';
 import { expectSnapshot } from '../util';
 
@@ -19,13 +18,14 @@ describe('Runtime Cluster', () => {
       privateDomain: 'private.domain',
       publicDomain: 'public.domain',
     });
+    const template = Template.fromStack(stack);
 
-    expectSnapshot(stack);
+    expectSnapshot(template);
 
     const countAzs = stack.availabilityZones.length;
-    expectInAllAzs(stack, countAzs);
-    expectNatSetting(stack, 'gateway', countAzs);
-    expectCertificate(stack, false);
+    expectInAllAzs(template, countAzs);
+    expectNatSetting(template, 'gateway', countAzs);
+    expectCertificate(template, false);
   });
   describe('Limited AZs', () => {
     const stack = newStack();
@@ -35,9 +35,10 @@ describe('Runtime Cluster', () => {
       publicDomain: 'public.domain',
       maxAzs: countAzs - 1,
     });
+    const template = Template.fromStack(stack);
 
-    expectSnapshot(stack);
-    expectInAllAzs(stack, countAzs - 1);
+    expectSnapshot(template);
+    expectInAllAzs(template, countAzs - 1);
   });
   describe('Use NAT instances', () => {
     const stack = newStack();
@@ -47,9 +48,10 @@ describe('Runtime Cluster', () => {
       publicDomain: 'public.domain',
       natInstanceType: 't3.micro',
     });
+    const template = Template.fromStack(stack);
 
-    expectSnapshot(stack);
-    expectNatSetting(stack, 'instance', countAzs);
+    expectSnapshot(template);
+    expectNatSetting(template, 'instance', countAzs);
   });
   describe('Maintained certificate', () => {
     const stack = newStack();
@@ -58,58 +60,59 @@ describe('Runtime Cluster', () => {
       publicDomain: 'public.domain',
       certificate: true,
     });
+    const template = Template.fromStack(stack);
 
-    expectSnapshot(stack);
-    expectCertificate(stack, true);
+    expectSnapshot(template);
+    expectCertificate(template, true);
   });
 });
 
-function expectInAllAzs(stack: cdk.Construct, azs: number) {
+function expectInAllAzs(template: Template, azs: number) {
   test('Is in all AZs', () => {
-    expectCDK(stack).to(countResources('AWS::EC2::Subnet', azs * 2));
-    expectCDK(stack).to(countResources('AWS::EC2::RouteTable', azs * 2));
-    expectCDK(stack).to(countResources('AWS::EC2::SubnetRouteTableAssociation', azs * 2));
+    template.resourceCountIs('AWS::EC2::Subnet', azs * 2);
+    template.resourceCountIs('AWS::EC2::RouteTable', azs * 2);
+    template.resourceCountIs('AWS::EC2::SubnetRouteTableAssociation', azs * 2);
   });
 }
 
-function expectNatSetting(stack: cdk.Construct, kind: 'gateway' | 'instance', azs: number) {
+function expectNatSetting(template: Template, kind: 'gateway' | 'instance', azs: number) {
   if (kind == 'gateway') {
     test('NAT Gateways in all AZs', () => {
-      expectCDK(stack).to(countResources('AWS::EC2::NatGateway', azs));
-      expectCDK(stack).to(countResources('AWS::EC2::EIP', azs));
+      template.resourceCountIs('AWS::EC2::NatGateway', azs);
+      template.resourceCountIs('AWS::EC2::EIP', azs);
     });
   } else {
     test('NAT Instances in all AZs', () => {
-      expect(stack).toCountResources('AWS::IAM::InstanceProfile', azs);
-      expect(stack).toCountResources('AWS::EC2::Instance', azs);
+      template.resourceCountIs('AWS::IAM::InstanceProfile', azs);
+      template.resourceCountIs('AWS::EC2::Instance', azs);
     });
   }
 }
 
-function expectCertificate(stack: cdk.Construct, created: boolean) {
+function expectCertificate(template: Template, created: boolean) {
   if (created) {
     test('Certificate is maintained', () => {
-      expect(stack).toHaveResourceLike('AWS::Lambda::Function', {
+      template.hasResourceProperties('AWS::Lambda::Function', {
         Handler: 'index.certificateRequestHandler',
       });
     });
   } else {
     test('No certificate maintained', () => {
-      expect(stack).toCountResources('AWS::Lambda::Function', 0);
+      template.resourceCountIs('AWS::Lambda::Function', 0);
     });
   }
 }
 
-function expectCertificateACM(stack: cdk.Construct, created: boolean) {
+/* function expectCertificateACM(template: Template, created: boolean) {
   if (created) {
     test('Certificate is maintained', () => {
-      expect(stack).toHaveResource('AWS::CertificateManager::Certificate', {
+      template.hasResourceProperties('AWS::CertificateManager::Certificate', {
         DomainName: '*.public.domain',
       });
     });
   } else {
     test('No certificate maintained', () => {
-      expect(stack).toCountResources('AWS::CertificateManager::Certificate', 0);
+      template.resourceCountIs('AWS::CertificateManager::Certificate', 0);
     });
   }
-}
+} */

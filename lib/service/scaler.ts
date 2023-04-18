@@ -1,5 +1,5 @@
-import * as cdk from '@aws-cdk/core';
-import * as ecs from '@aws-cdk/aws-ecs';
+import { aws_ecs as ecs } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
 import { ScalingType } from '../util/resources';
 
 export interface ScalerProps {
@@ -7,8 +7,8 @@ export interface ScalerProps {
   readonly service: ecs.BaseService;
 }
 
-export class Scaler extends cdk.Construct {
-  constructor(scope: cdk.Construct, id: string, props: ScalerProps) {
+export class Scaler extends Construct {
+  constructor(scope: Construct, id: string, props: ScalerProps) {
     super(scope, id);
     if (props.scaling.mode !== 'scaling') return;
     if (props.scaling.thresholds.length === 0) {

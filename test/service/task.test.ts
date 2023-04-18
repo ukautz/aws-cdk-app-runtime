@@ -1,17 +1,18 @@
-import * as cdk from '@aws-cdk/core';
-import * as ec2 from '@aws-cdk/aws-ec2';
-import * as ecs from '@aws-cdk/aws-ecs';
-import '@aws-cdk/assert/jest';
-import { expectSnapshot } from '../util';
-import { TaskProps, ScheduledTask, taskSpecKeys } from '../../lib/service';
+import * as cdk from 'aws-cdk-lib';
+import { aws_ec2 as ec2, aws_ecs as ecs } from 'aws-cdk-lib';
+import { Template } from 'aws-cdk-lib/assertions';
+import { Construct } from 'constructs';
 import { ClusterSpecs } from '../../lib/cluster';
+import { ScheduledTask, TaskProps, taskSpecKeys } from '../../lib/service';
+import { expectSnapshot, getChild } from '../util';
 
 describe('App Runtime Task', () => {
   describe('Scheduled Task', () => {
     const { stack, task } = setupScheduledTaskStack();
-    expectSnapshot(stack);
-    assertTaskDefinition(stack);
-    assertSecurityGroup(stack);
+    const template = Template.fromStack(stack);
+    expectSnapshot(template);
+    assertTaskDefinition(stack, template);
+    assertSecurityGroup(stack, template);
 
     it('Returns all specs', () => {
       expect(Object.keys(task.specs).sort()).toEqual(taskSpecKeys.sort());
@@ -19,12 +20,13 @@ describe('App Runtime Task', () => {
   });
 
   describe('With logging', () => {
-    const { stack, task } = setupScheduledTaskStack({
+    const { stack } = setupScheduledTaskStack({
       logging: '/log-prefix/',
     });
-    expectSnapshot(stack);
-    expect(stack).toCountResources('AWS::Logs::LogGroup', 1);
-    expect(stack).toHaveResourceLike('AWS::ECS::TaskDefinition', {
+    const template = Template.fromStack(stack);
+    expectSnapshot(template);
+    template.resourceCountIs('AWS::Logs::LogGroup', 1);
+    template.hasResourceProperties('AWS::ECS::TaskDefinition', {
       ContainerDefinitions: [
         {
           LogConfiguration: {
@@ -39,10 +41,10 @@ describe('App Runtime Task', () => {
   });
 });
 
-function assertTaskDefinition(stack: cdk.Stack) {
+function assertTaskDefinition(stack: cdk.Stack, template: Template) {
   describe('Task Definition', () => {
     it('Has resource claims', () => {
-      expect(stack).toHaveResourceLike('AWS::ECS::TaskDefinition', {
+      template.hasResourceProperties('AWS::ECS::TaskDefinition', {
         Cpu: '1024',
         Memory: '2048',
         ContainerDefinitions: [
@@ -54,7 +56,7 @@ function assertTaskDefinition(stack: cdk.Stack) {
       });
     });
     it('Uses the provided image', () => {
-      expect(stack).toHaveResourceLike('AWS::ECS::TaskDefinition', {
+      template.hasResourceProperties('AWS::ECS::TaskDefinition', {
         ContainerDefinitions: [
           {
             Image: 'my-app:v1.2.3',
@@ -63,13 +65,15 @@ function assertTaskDefinition(stack: cdk.Stack) {
       });
     });
     it('Exports runtime labels', () => {
-      expect(stack).toHaveResourceLike('AWS::ECS::TaskDefinition', {
+      const cluster = getChild(stack, 'Cluster') as ecs.Cluster;
+      const securityGroup = getChild(stack, 'Task', 'SecurityGroup') as ec2.SecurityGroup;
+      template.hasResourceProperties('AWS::ECS::TaskDefinition', {
         ContainerDefinitions: [
           {
             DockerLabels: {
-              'runtime.cluster': undefined,
+              'runtime.cluster': stack.resolve(cluster.clusterName),
               'runtime.resources': 'cpu: 1024, memory: 2048, concurrent: 3',
-              'runtime.securityGroup': undefined,
+              'runtime.securityGroup': stack.resolve(securityGroup.securityGroupId),
             },
           },
         ],
@@ -78,11 +82,12 @@ function assertTaskDefinition(stack: cdk.Stack) {
   });
 }
 
-function assertSecurityGroup(stack: cdk.Stack) {
+function assertSecurityGroup(stack: cdk.Stack, template: Template) {
   describe('Security Group', () => {
     it('Pre-creates a security group', () => {
-      expect(stack).toHaveResourceLike('AWS::EC2::SecurityGroup', {
-        VpcId: undefined,
+      const vpc = getChild(stack, 'Vpc') as ec2.Vpc;
+      template.hasResourceProperties('AWS::EC2::SecurityGroup', {
+        VpcId: stack.resolve(vpc.vpcId),
       });
     });
   });
@@ -97,7 +102,7 @@ function setupScheduledTaskStack(props?: Partial<TaskProps>): { stack: cdk.Stack
     name: 'task-name',
     image: 'my-app',
     imageVersion: 'v1.2.3',
-    cluster: (scope: cdk.Construct) => ({ cluster, specs }),
+    cluster: (_: Construct) => ({ cluster, specs }),
     schedule: 'rate(30 minute)',
     resources: { cpu: 1024, memory: 2048, scaling: { mode: 'concurrent', concurrent: 3 } },
     ...props,

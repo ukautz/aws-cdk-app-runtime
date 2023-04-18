@@ -1,14 +1,11 @@
-import * as cdk from '@aws-cdk/core';
-import * as ec2 from '@aws-cdk/aws-ec2';
-import * as ecs from '@aws-cdk/aws-ecs';
-import * as servicediscovery from '@aws-cdk/aws-servicediscovery';
-import { ServiceSpecs } from './service-specs';
-import { ComponentProps, Component, secretsFromProps } from './component';
-import { Scaler } from './scaler';
-import { ecsLogDriver } from '../util/logging';
-import * as elbv2 from '@aws-cdk/aws-elasticloadbalancingv2';
-import { timeStamp } from 'console';
+import * as cdk from 'aws-cdk-lib';
+import { aws_ec2 as ec2, aws_ecs as ecs, aws_servicediscovery as servicediscovery } from 'aws-cdk-lib';
+import { Construct, IConstruct } from 'constructs';
 import { ClusterSpecs } from '../cluster';
+import { ecsLogDriver } from '../util/logging';
+import { Component, ComponentProps, secretsFromProps } from './component';
+import { Scaler } from './scaler';
+import { ServiceSpecs } from './service-specs';
 
 export interface ServiceProps extends ComponentProps {
   /**
@@ -37,7 +34,7 @@ export interface ServiceProps extends ComponentProps {
  * @see https://docs.aws.amazon.com/cdk/api/latest/docs/@aws-cdk_aws-ecs.FargateService.html#cloudmapoptions - misses option to set routing policy
  */
 class EnforceWeightedRoutingForService implements cdk.IAspect {
-  public visit(node: cdk.IConstruct): void {
+  public visit(node: IConstruct): void {
     if (!(node instanceof servicediscovery.CfnService)) {
       return;
     }
@@ -54,7 +51,7 @@ class EnforceWeightedRoutingForService implements cdk.IAspect {
 export class Service extends Component<ServiceProps> implements ec2.IConnectable {
   public readonly service: ecs.FargateService;
 
-  constructor(scope: cdk.Construct, id: string, props: ServiceProps) {
+  constructor(scope: Construct, id: string, props: ServiceProps) {
     super(scope, id, props);
 
     const mode = props.resources?.scaling?.mode ?? 'fixed';

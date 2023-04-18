@@ -1,126 +1,97 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Service Specs Service Store Encrypted to Ssm Matches Snapshot 1`] = `
-Object {
-  "Resources": Object {
-    "ClusterSpecD8C9F318": Object {
-      "Properties": Object {
+exports[`Service Specs Service Store to Ssm Matches Snapshot 1`] = `
+{
+  "Parameters": {
+    "BootstrapVersion": {
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+  },
+  "Resources": {
+    "ClusterSpecD8C9F318": {
+      "Properties": {
         "Name": "/prefixed/cluster",
-        "Type": "SecureString",
+        "Type": "String",
         "Value": "cluster",
       },
       "Type": "AWS::SSM::Parameter",
     },
-    "IamPrincipalSpec6C2077B5": Object {
-      "Properties": Object {
+    "IamPrincipalSpec6C2077B5": {
+      "Properties": {
         "Name": "/prefixed/iamPrincipal",
-        "Type": "SecureString",
+        "Type": "String",
         "Value": "iamPrincipal",
       },
       "Type": "AWS::SSM::Parameter",
     },
-    "PrivateHostnameSpec3227E9D6": Object {
-      "Properties": Object {
+    "PrivateHostnameSpec3227E9D6": {
+      "Properties": {
         "Name": "/prefixed/privateHostname",
-        "Type": "SecureString",
+        "Type": "String",
         "Value": "privateHostname",
       },
       "Type": "AWS::SSM::Parameter",
     },
-    "PublicHostnameSpec6DD71BF0": Object {
-      "Properties": Object {
+    "PublicHostnameSpec6DD71BF0": {
+      "Properties": {
         "Name": "/prefixed/publicHostname",
-        "Type": "SecureString",
+        "Type": "String",
         "Value": "publicHostname",
       },
       "Type": "AWS::SSM::Parameter",
     },
-    "ResourcesSpec1B6B0F2A": Object {
-      "Properties": Object {
+    "ResourcesSpec1B6B0F2A": {
+      "Properties": {
         "Name": "/prefixed/resources",
-        "Type": "SecureString",
+        "Type": "String",
         "Value": "resources",
       },
       "Type": "AWS::SSM::Parameter",
     },
-    "SecurityGroupIdsSpec5B6C3A31": Object {
-      "Properties": Object {
+    "SecurityGroupIdsSpec5B6C3A31": {
+      "Properties": {
         "Name": "/prefixed/securityGroupIds",
-        "Type": "SecureString",
+        "Type": "String",
         "Value": "securityGroupIds",
       },
       "Type": "AWS::SSM::Parameter",
     },
-    "ServiceSpec5B11C641": Object {
-      "Properties": Object {
+    "ServiceSpec5B11C641": {
+      "Properties": {
         "Name": "/prefixed/service",
-        "Type": "SecureString",
+        "Type": "String",
         "Value": "service",
       },
       "Type": "AWS::SSM::Parameter",
     },
   },
-}
-`;
-
-exports[`Service Specs Service Store to Ssm Matches Snapshot 1`] = `
-Object {
-  "Resources": Object {
-    "ClusterSpecD8C9F318": Object {
-      "Properties": Object {
-        "Name": "/prefixed/cluster",
-        "Type": "String",
-        "Value": "cluster",
-      },
-      "Type": "AWS::SSM::Parameter",
-    },
-    "IamPrincipalSpec6C2077B5": Object {
-      "Properties": Object {
-        "Name": "/prefixed/iamPrincipal",
-        "Type": "String",
-        "Value": "iamPrincipal",
-      },
-      "Type": "AWS::SSM::Parameter",
-    },
-    "PrivateHostnameSpec3227E9D6": Object {
-      "Properties": Object {
-        "Name": "/prefixed/privateHostname",
-        "Type": "String",
-        "Value": "privateHostname",
-      },
-      "Type": "AWS::SSM::Parameter",
-    },
-    "PublicHostnameSpec6DD71BF0": Object {
-      "Properties": Object {
-        "Name": "/prefixed/publicHostname",
-        "Type": "String",
-        "Value": "publicHostname",
-      },
-      "Type": "AWS::SSM::Parameter",
-    },
-    "ResourcesSpec1B6B0F2A": Object {
-      "Properties": Object {
-        "Name": "/prefixed/resources",
-        "Type": "String",
-        "Value": "resources",
-      },
-      "Type": "AWS::SSM::Parameter",
-    },
-    "SecurityGroupIdsSpec5B6C3A31": Object {
-      "Properties": Object {
-        "Name": "/prefixed/securityGroupIds",
-        "Type": "String",
-        "Value": "securityGroupIds",
-      },
-      "Type": "AWS::SSM::Parameter",
-    },
-    "ServiceSpec5B11C641": Object {
-      "Properties": Object {
-        "Name": "/prefixed/service",
-        "Type": "String",
-        "Value": "service",
-      },
-      "Type": "AWS::SSM::Parameter",
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                  ],
+                  {
+                    "Ref": "BootstrapVersion",
+                  },
+                ],
+              },
+            ],
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.",
+        },
+      ],
     },
   },
 }

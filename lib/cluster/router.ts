@@ -1,12 +1,15 @@
-import * as cdk from '@aws-cdk/core';
-import * as ec2 from '@aws-cdk/aws-ec2';
-import * as ecs from '@aws-cdk/aws-ecs';
-import * as elbv2 from '@aws-cdk/aws-elasticloadbalancingv2';
-import * as acm from '@aws-cdk/aws-certificatemanager';
-import * as iam from '@aws-cdk/aws-iam';
-import * as route53 from '@aws-cdk/aws-route53';
-import * as targets from '@aws-cdk/aws-route53-targets';
-import * as servicediscovery from '@aws-cdk/aws-servicediscovery';
+import * as cdk from 'aws-cdk-lib';
+import {
+  aws_certificatemanager as acm,
+  aws_ec2 as ec2,
+  aws_ecs as ecs,
+  aws_elasticloadbalancingv2 as elbv2,
+  aws_iam as iam,
+  aws_route53 as route53,
+  aws_servicediscovery as servicediscovery,
+  aws_route53_targets as targets,
+} from 'aws-cdk-lib';
+import { Construct } from 'constructs';
 import * as service from '../service';
 import * as util from '../util';
 import { loadCertificate } from '../util/loaders';
@@ -73,7 +76,7 @@ export interface RouterPropsExposed {
   readonly imageVersion?: string;
 }
 
-export interface RouterSpecs {
+export interface RouterSpecs extends Record<string, unknown> {
   /**
    * ARN of the (fargate) ECS <TODO> that
    */
@@ -132,14 +135,14 @@ export interface RouterSpecs {
  * Considerations:
  * - Multiple routing models? This is a shared model, using a hostname based routing with Traefik behind an ALB. Other models could dedicate resources (i.e. an ALB per service) etc.
  */
-export class Router extends cdk.Construct implements iam.IGrantable, ec2.IConnectable {
+export class Router extends Construct implements iam.IGrantable, ec2.IConnectable {
   public readonly service: ecs.FargateService;
   public readonly loadBalancer: elbv2.IApplicationLoadBalancer;
   public readonly grantPrincipal: iam.Role;
   public readonly certificate?: acm.ICertificate;
   private readonly resources: util.Resources;
 
-  constructor(scope: cdk.Construct, id: string, props: RouterProps) {
+  constructor(scope: Construct, id: string, props: RouterProps) {
     super(scope, id);
 
     this.resources =
@@ -148,7 +151,7 @@ export class Router extends cdk.Construct implements iam.IGrantable, ec2.IConnec
         : new util.Resources(props.resources);
 
     this.certificate = this.initCertificate(props);
-    this.grantPrincipal = this.createServiceTaskRole(props);
+    this.grantPrincipal = this.createServiceTaskRole();
 
     const image = this.initImage(props);
     this.service = this.createService(props, image);
@@ -393,7 +396,7 @@ export class Router extends cdk.Construct implements iam.IGrantable, ec2.IConnec
    * Treafik is allowed to scan the ECS cluster it runs in
    * @param props
    */
-  private createServiceTaskRole(props: RouterProps) {
+  private createServiceTaskRole() {
     // TODO: specify conditions for IAM principal, so that only they can..
     /* const conditions = {
       conditions: {

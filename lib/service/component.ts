@@ -1,8 +1,5 @@
-import * as cdk from '@aws-cdk/core';
-import * as ec2 from '@aws-cdk/aws-ec2';
-import * as ecs from '@aws-cdk/aws-ecs';
-import * as iam from '@aws-cdk/aws-iam';
-import * as ssm from '@aws-cdk/aws-ssm';
+import { aws_ecs as ecs, aws_iam as iam, aws_ssm as ssm } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
 import { Cluster, ClusterSpecs } from '../cluster';
 import { Resources, ResourcesProps } from '../util';
 import { loadContainerImage } from './image';
@@ -54,13 +51,13 @@ export interface ComponentProps {
   /**
    * Cluster specs can be either provided directly or as a prefix string to load from SSM
    */
-  cluster: ClusterSpecs | Cluster | string | ((scope: cdk.Construct) => { cluster: ecs.ICluster; specs: ClusterSpecs });
+  cluster: ClusterSpecs | Cluster | string | ((scope: Construct) => { cluster: ecs.ICluster; specs: ClusterSpecs });
 }
 
 /**
  * Super class for any Component that runs in a Cluster. Shared properties of Services and Tasks.
  */
-export abstract class Component<ComponentT extends ComponentProps> extends cdk.Construct implements iam.IGrantable {
+export abstract class Component<ComponentT extends ComponentProps> extends Construct implements iam.IGrantable {
   /**
    * The name of the Component
    */
@@ -100,7 +97,7 @@ export abstract class Component<ComponentT extends ComponentProps> extends cdk.C
 
   public readonly taskDefinition: ecs.FargateTaskDefinition;
 
-  constructor(scope: cdk.Construct, id: string, props: ComponentT) {
+  constructor(scope: Construct, id: string, props: ComponentT) {
     super(scope, id);
 
     // initialize cluster specs
@@ -125,9 +122,9 @@ export abstract class Component<ComponentT extends ComponentProps> extends cdk.C
     this.taskRole = this.initTaskRole(props);
     this.taskExecutionRole = this.initTaskExecutionRole(props);
     this.image = this.initImage(props);
-    this.taskDefinition = this.initTaskDefinition(props);
+    this.taskDefinition = this.initTaskDefinition();
 
-    function specClusterLoader(scope: cdk.Construct, specs: ClusterSpecs): ecs.ICluster {
+    function specClusterLoader(scope: Construct, specs: ClusterSpecs): ecs.ICluster {
       return ClusterSpecs.lookupCluster(scope, 'Cluster', specs);
     }
   }
@@ -183,7 +180,7 @@ export abstract class Component<ComponentT extends ComponentProps> extends cdk.C
     });
   }
 
-  private initTaskDefinition(props: ComponentT): ecs.FargateTaskDefinition {
+  private initTaskDefinition(): ecs.FargateTaskDefinition {
     return new ecs.FargateTaskDefinition(this, 'TaskDefinition', {
       cpu: this.resources.cpu,
       memoryLimitMiB: this.resources.memory,
@@ -193,7 +190,7 @@ export abstract class Component<ComponentT extends ComponentProps> extends cdk.C
   }
 }
 
-export const secretsFromProps = (scope: cdk.Construct, secrets?: Record<string, string>): Record<string, ecs.Secret> =>
+export const secretsFromProps = (scope: Construct, secrets?: Record<string, string>): Record<string, ecs.Secret> =>
   Object.fromEntries(
     Object.entries(secrets ?? {}).map(([key, value]) => {
       return [

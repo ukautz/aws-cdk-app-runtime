@@ -1,4 +1,3 @@
-import '@aws-cdk/assert/jest';
 import { ServiceSpecs, serviceSpecKeys } from '../../lib/service';
 import { assertSpecs } from '../util/specs.suite';
 

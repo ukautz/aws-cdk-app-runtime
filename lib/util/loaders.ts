@@ -1,9 +1,8 @@
-import * as cdk from '@aws-cdk/core';
-import * as acm from '@aws-cdk/aws-certificatemanager';
-import * as route53 from '@aws-cdk/aws-route53';
+import { aws_certificatemanager as acm, aws_route53 as route53 } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
 
 export const loadCertificate = (
-  scope: cdk.Construct,
+  scope: Construct,
   certificate?: boolean | string | acm.ICertificate,
   defaultValue?: () => acm.ICertificate | undefined
 ): acm.ICertificate | undefined => {
@@ -18,7 +17,7 @@ export const loadCertificate = (
 };
 
 export const loadHostedZone = (
-  scope: cdk.Construct,
+  scope: Construct,
   from: string | route53.IHostedZone | undefined,
   defaultValue: () => route53.IHostedZone
 ): route53.IHostedZone =>

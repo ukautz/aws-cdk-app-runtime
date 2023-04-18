@@ -1,8 +1,7 @@
-import * as cdk from '@aws-cdk/core';
-import * as ecs from '@aws-cdk/aws-ecs';
-import * as ecr from '@aws-cdk/aws-ecr';
-import * as path from 'path';
+import { aws_ecr as ecr, aws_ecs as ecs } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
 import * as fs from 'fs';
+import * as path from 'path';
 
 /**
  *
@@ -11,7 +10,7 @@ import * as fs from 'fs';
  * @param imageVersion for docker hub image: added version tag, for ecr: added version arn, for local path: value of BUILD_TAG build parameter
  */
 export const loadContainerImage = (
-  scope: cdk.Construct,
+  scope: Construct,
   imageName: string,
   imageVersion?: string,
   buildArgs?: Record<string, string>
@@ -60,7 +59,7 @@ export const loadContainerImage = (
  * @returns the image repository name (like `arn:aws:ecr:xx-region-1:123123123:repository/repo-name`) and the image tag (like `v1.2.3`)
  */
 function parseEcrImageName(image: string): string {
-  const match = image.match(/^([0-9]+)\.dkr\.ecr\.([^\.]+)\.amazonaws\.com\/([^:]+)$/);
+  const match = image.match(/^([0-9]+)\.dkr\.ecr\.([^.]+)\.amazonaws\.com\/([^:]+)$/);
   if (!match) {
     throw new Error(`invalid ECR image URL "${image}" (hint: must not contain tag)`);
   }

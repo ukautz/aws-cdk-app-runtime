@@ -1,12 +1,14 @@
-import * as cdk from '@aws-cdk/core';
-import * as ecs from '@aws-cdk/aws-ecs';
-import * as route53 from '@aws-cdk/aws-route53';
-import * as ec2 from '@aws-cdk/aws-ec2';
-import * as servicediscovery from '@aws-cdk/aws-servicediscovery';
-import * as acm from '@aws-cdk/aws-certificatemanager';
+import {
+  aws_certificatemanager as acm,
+  aws_ec2 as ec2,
+  aws_ecs as ecs,
+  aws_route53 as route53,
+  aws_servicediscovery as servicediscovery,
+} from 'aws-cdk-lib';
+import { Construct } from 'constructs';
+import { loadHostedZone } from '../util/loaders';
+import { Router, RouterPropsExposed } from './router';
 import { Specs } from './specs';
-import { RouterPropsExposed, Router } from './router';
-import { loadCertificate, loadHostedZone } from '../util/loaders';
 
 export interface ClusterProps {
   /**
@@ -67,7 +69,7 @@ export interface ClusterProps {
  * Considerations:
  * - Like to see in EKS. Option or Class? What is shared?
  */
-export class Cluster extends cdk.Construct {
+export class Cluster extends Construct {
   public readonly privateDomain: string;
   public readonly publicDomain: string;
   public readonly hostedZone: route53.IHostedZone;
@@ -75,7 +77,7 @@ export class Cluster extends cdk.Construct {
   public readonly cluster: ecs.ICluster;
   public readonly router: Router;
 
-  constructor(scope: cdk.Construct, id: string, props: ClusterProps) {
+  constructor(scope: Construct, id: string, props: ClusterProps) {
     super(scope, id);
 
     this.privateDomain = props.privateDomain;

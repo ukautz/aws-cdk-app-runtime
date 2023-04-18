@@ -16,12 +16,11 @@ The resulting AWS infrastructure looks roughly like this (leaving out multiple a
 
 ![App Runtime: AWS](docs/app-runtime-aws.png)
 
-
 ## Purpose & State
 
 The purpose of this module is for me to explore the idea outlined in the Blog entry. In short: a library that provides AWS CDK L3 constructs implementing components that allow to run and maintain an application platform from AWS CDK code alone.
 
-This project is to be considered **experimental**. This is a Proof-of-concept.  _Do not use it in production_, for I don't. This is one of the reasons why I decided not to publish to the official NPM registry, but to use [Github packages](https://github.com/features/packages) instead.
+This project is to be considered **experimental**. This is a Proof-of-concept. _Do not use it in production_, for I don't. This is one of the reasons why I decided not to publish to the official NPM registry, but to use [Github packages](https://github.com/features/packages) instead.
 
 ## Usage
 
@@ -30,6 +29,7 @@ Learn how to use an _Github Packages_ hosted NPM packages [here](https://docs.gi
 ```sh
 npm install @ukautz/aws-cdk-app-runtime
 ```
+
 ### Minimal Application Runtime
 
 The following creates the a VPC, an ECS cluster within, two hosted zones (one is a service discovery cloudmap, if you need to know) and a router service that runs Traefik - as well as all the boilerplate and glue resources.
@@ -41,12 +41,11 @@ import * as appruntime from '@ukautz/aws-cdk-app-runtime';
 import * as path from 'path';
 
 export class MinimalStack extends cdk.Stack {
-  constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
+  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
     // create a cluster, in which the services will run
     const cluster = new appruntime.Cluster(this, 'Cluster', {
-      
       // will be the hosted zone, in which `<any-app-name>.public.domain` will be routed to load balancer as wildcard record
       publicDomain: 'public.domain',
 
