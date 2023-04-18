@@ -1,5 +1,7 @@
-import * as cdk from '@aws-cdk/core';
-import * as ssm from '@aws-cdk/aws-ssm';
+import * as cdk from 'aws-cdk-lib';
+import { aws_ssm as ssm } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
+
 import { ssmValueFromLookup } from './context';
 
 export class SpecUtil {
@@ -11,7 +13,7 @@ export class SpecUtil {
     return specs as unknown as TSpec;
   }
 
-  public static fromContext<TSpec>(props: string[], scope: cdk.Construct, prefix?: string): TSpec {
+  public static fromContext<TSpec>(props: string[], scope: Construct, prefix?: string): TSpec {
     const specs: Record<string, string> = {};
     const pref = prefix ?? '';
     props.forEach((prop) => {
@@ -25,7 +27,7 @@ export class SpecUtil {
     return specs as unknown as TSpec;
   }
 
-  public static fromSsm<TSpec>(props: string[], scope: cdk.Construct, prefix?: string): TSpec {
+  public static fromSsm<TSpec>(props: string[], scope: Construct, prefix?: string): TSpec {
     const specs: Record<string, string> = {};
     const pref = prefix ?? '';
     props.forEach((prop) => {
@@ -46,17 +48,19 @@ export class SpecUtil {
     return specs as unknown as TSpec;
   }
 
-  public static toSsm<TSpec>(scope: cdk.Construct, prefix: string, specs: TSpec, secure?: boolean): void {
+  public static toSsm<TSpec extends Record<string, unknown>>(
+    props: string[],
+    scope: Construct,
+    prefix: string,
+    specs: TSpec
+  ): void {
     Object.entries(specs)
-      .filter((entry) => entry[1]) // cannot store empty values
-      .forEach((entry) => {
-        const prop = entry[0],
-          value = entry[1];
+      .filter(([prop]) => specs[prop]) // cannot store empty values
+      .forEach(([prop, value]) => {
         const name = prop.slice(0, 1).toUpperCase() + prop.slice(1);
         new ssm.StringParameter(scope, `${name}Spec`, {
           parameterName: `${prefix}${prop}`,
           stringValue: `${value}`,
-          type: secure ? ssm.ParameterType.SECURE_STRING : ssm.ParameterType.STRING,
         });
       });
   }

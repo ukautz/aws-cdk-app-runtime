@@ -1,5 +1,6 @@
-import * as cdk from '@aws-cdk/core';
 import * as cxschema from '@aws-cdk/cloud-assembly-schema';
+import * as cdk from 'aws-cdk-lib';
+import { Construct } from 'constructs';
 
 /**
  * Wrapper for context loopkup
@@ -9,7 +10,7 @@ import * as cxschema from '@aws-cdk/cloud-assembly-schema';
  * @returns
  */
 export const contextValueFromLookup = (
-  scope: cdk.Construct,
+  scope: Construct,
   props: { provider: string; parameterName: string; dummyValue?: string }
 ): string =>
   cdk.ContextProvider.getValue(scope, {
@@ -28,7 +29,7 @@ export const contextValueFromLookup = (
  * @param dummyValue
  * @returns
  */
-export const ssmValueFromLookup = (scope: cdk.Construct, name: string, dummyValue?: string): string =>
+export const ssmValueFromLookup = (scope: Construct, name: string, dummyValue?: string): string =>
   contextValueFromLookup(scope, {
     provider: cxschema.ContextProvider.SSM_PARAMETER_PROVIDER,
     parameterName: name,

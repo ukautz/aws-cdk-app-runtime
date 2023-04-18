@@ -1,14 +1,14 @@
-import * as cdk from '@aws-cdk/core';
-import '@aws-cdk/assert/jest';
-import { SynthUtils } from '@aws-cdk/assert';
+import * as cdk from 'aws-cdk-lib';
+import { Template } from 'aws-cdk-lib/assertions';
+import { Construct } from 'constructs';
 
 export interface TestSpecProps<TSpec> {
   readonly name: string;
   readonly keys: string[];
   readonly make: (generator?: (prop: string) => string) => TSpec;
-  readonly fromContext: (scope: cdk.Construct, prefix?: string) => TSpec;
-  readonly fromSsm: (scope: cdk.Construct, prefix?: string) => TSpec;
-  readonly toSsm: (scope: cdk.Construct, prefix: string, specs: TSpec, secure?: boolean) => void;
+  readonly fromContext: (scope: Construct, prefix?: string) => TSpec;
+  readonly fromSsm: (scope: Construct, prefix?: string) => TSpec;
+  readonly toSsm: (scope: Construct, prefix: string, specs: TSpec) => void;
 }
 
 export function assertSpecs<TSpec>(props: TestSpecProps<TSpec>) {
@@ -64,43 +64,16 @@ export function assertSpecs<TSpec>(props: TestSpecProps<TSpec>) {
         '/prefixed/',
         props.make((key) => key)
       );
+      const template = Template.fromStack(stack);
       it('Matches Snapshot', () => {
-        expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
+        expect(template.toJSON()).toMatchSnapshot();
       });
       it('Spec properties in Cloudformation', () => {
-        expect(stack).toCountResources('AWS::SSM::Parameter', props.keys.length);
+        template.resourceCountIs('AWS::SSM::Parameter', props.keys.length);
         props.keys.forEach((key) => {
-          expect(stack).toHaveResource('AWS::SSM::Parameter', {
+          template.hasResourceProperties('AWS::SSM::Parameter', {
             Name: `/prefixed/${key}`,
             Type: 'String',
-            Value: key,
-          });
-        });
-      });
-    });
-    describe('Store Encrypted to Ssm', () => {
-      const app = new cdk.App();
-      const stack = new cdk.Stack(app, 'Stack', {
-        env: {
-          account: '123123123',
-          region: 'us-east-1',
-        },
-      });
-      props.toSsm(
-        stack,
-        '/prefixed/',
-        props.make((key) => key),
-        true
-      );
-      it('Matches Snapshot', () => {
-        expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
-      });
-      it('Spec properties in Cloudformation', () => {
-        expect(stack).toCountResources('AWS::SSM::Parameter', props.keys.length);
-        props.keys.forEach((key) => {
-          expect(stack).toHaveResource('AWS::SSM::Parameter', {
-            Name: `/prefixed/${key}`,
-            Type: 'SecureString',
             Value: key,
           });
         });

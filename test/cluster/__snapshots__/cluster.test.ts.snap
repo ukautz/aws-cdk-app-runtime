@@ -1,50 +1,60 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Runtime Cluster Default Setup Matches Snapshot 1`] = `
-Object {
-  "Resources": Object {
-    "ClusterC2E21B66": Object {
+{
+  "Parameters": {
+    "BootstrapVersion": {
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+  },
+  "Resources": {
+    "ClusterC2E21B66": {
       "Type": "AWS::ECS::Cluster",
     },
-    "ClusterDefaultServiceDiscoveryNamespaceD29986FD": Object {
-      "Properties": Object {
+    "ClusterDefaultServiceDiscoveryNamespaceD29986FD": {
+      "Properties": {
         "Name": "private.domain",
-        "Vpc": Object {
+        "Vpc": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::ServiceDiscovery::PrivateDnsNamespace",
     },
-    "ClusterRouterLoadBalancer1D918095": Object {
-      "DependsOn": Array [
+    "ClusterRouterLoadBalancer1D918095": {
+      "DependsOn": [
         "ClusterVpcPublicSubnet1DefaultRoute62DA4B4B",
+        "ClusterVpcPublicSubnet1RouteTableAssociation0FBEF1F4",
         "ClusterVpcPublicSubnet2DefaultRoute97446C8A",
+        "ClusterVpcPublicSubnet2RouteTableAssociation8446B27D",
         "ClusterVpcPublicSubnet3DefaultRoute772CA282",
+        "ClusterVpcPublicSubnet3RouteTableAssociationD919DEF1",
       ],
-      "Properties": Object {
-        "LoadBalancerAttributes": Array [
-          Object {
+      "Properties": {
+        "LoadBalancerAttributes": [
+          {
             "Key": "deletion_protection.enabled",
             "Value": "false",
           },
         ],
         "Scheme": "internet-facing",
-        "SecurityGroups": Array [
-          Object {
-            "Fn::GetAtt": Array [
+        "SecurityGroups": [
+          {
+            "Fn::GetAtt": [
               "ClusterRouterLoadBalancerSecurityGroupE1E5F3D9",
               "GroupId",
             ],
           },
         ],
-        "Subnets": Array [
-          Object {
+        "Subnets": [
+          {
             "Ref": "ClusterVpcPublicSubnet1SubnetA9F7E0A5",
           },
-          Object {
+          {
             "Ref": "ClusterVpcPublicSubnet2Subnet059113C4",
           },
-          Object {
+          {
             "Ref": "ClusterVpcPublicSubnet3Subnet3AB4E59C",
           },
         ],
@@ -52,17 +62,17 @@ Object {
       },
       "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
     },
-    "ClusterRouterLoadBalancerHttpListener5011B408": Object {
-      "Properties": Object {
-        "DefaultActions": Array [
-          Object {
-            "TargetGroupArn": Object {
+    "ClusterRouterLoadBalancerHttpListener5011B408": {
+      "Properties": {
+        "DefaultActions": [
+          {
+            "TargetGroupArn": {
               "Ref": "ClusterRouterLoadBalancerHttpListenerEcsServiceGroup644FD2FA",
             },
             "Type": "forward",
           },
         ],
-        "LoadBalancerArn": Object {
+        "LoadBalancerArn": {
           "Ref": "ClusterRouterLoadBalancer1D918095",
         },
         "Port": 80,
@@ -70,23 +80,29 @@ Object {
       },
       "Type": "AWS::ElasticLoadBalancingV2::Listener",
     },
-    "ClusterRouterLoadBalancerHttpListenerEcsServiceGroup644FD2FA": Object {
-      "Properties": Object {
+    "ClusterRouterLoadBalancerHttpListenerEcsServiceGroup644FD2FA": {
+      "Properties": {
         "HealthCheckPath": "/ping",
         "Port": 80,
         "Protocol": "HTTP",
+        "TargetGroupAttributes": [
+          {
+            "Key": "stickiness.enabled",
+            "Value": "false",
+          },
+        ],
         "TargetType": "ip",
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
     },
-    "ClusterRouterLoadBalancerSecurityGroupE1E5F3D9": Object {
-      "Properties": Object {
+    "ClusterRouterLoadBalancerSecurityGroupE1E5F3D9": {
+      "Properties": {
         "GroupDescription": "Automatically created Security Group for ELB StackClusterRouterLoadBalancer49BEBF7D",
-        "SecurityGroupIngress": Array [
-          Object {
+        "SecurityGroupIngress": [
+          {
             "CidrIp": "0.0.0.0/0",
             "Description": "Allow from anyone on port 80",
             "FromPort": 80,
@@ -94,24 +110,24 @@ Object {
             "ToPort": 80,
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::SecurityGroup",
     },
-    "ClusterRouterLoadBalancerSecurityGrouptoStackClusterRouterServiceSecurityGroupDD1CDD3B805BD321E7": Object {
-      "Properties": Object {
+    "ClusterRouterLoadBalancerSecurityGrouptoStackClusterRouterServiceSecurityGroupDD1CDD3B805BD321E7": {
+      "Properties": {
         "Description": "Load balancer to target",
-        "DestinationSecurityGroupId": Object {
-          "Fn::GetAtt": Array [
+        "DestinationSecurityGroupId": {
+          "Fn::GetAtt": [
             "ClusterRouterServiceSecurityGroupCBEC2A56",
             "GroupId",
           ],
         },
         "FromPort": 80,
-        "GroupId": Object {
-          "Fn::GetAtt": Array [
+        "GroupId": {
+          "Fn::GetAtt": [
             "ClusterRouterLoadBalancerSecurityGroupE1E5F3D9",
             "GroupId",
           ],
@@ -121,18 +137,18 @@ Object {
       },
       "Type": "AWS::EC2::SecurityGroupEgress",
     },
-    "ClusterRouterNamespaceRecord89A640AB": Object {
-      "Properties": Object {
+    "ClusterRouterNamespaceRecord89A640AB": {
+      "Properties": {
         "Description": "Traefik router",
-        "DnsConfig": Object {
-          "DnsRecords": Array [
-            Object {
+        "DnsConfig": {
+          "DnsRecords": [
+            {
               "TTL": 60,
               "Type": "A",
             },
           ],
-          "NamespaceId": Object {
-            "Fn::GetAtt": Array [
+          "NamespaceId": {
+            "Fn::GetAtt": [
               "ClusterDefaultServiceDiscoveryNamespaceD29986FD",
               "Id",
             ],
@@ -140,8 +156,8 @@ Object {
           "RoutingPolicy": "MULTIVALUE",
         },
         "Name": "_router",
-        "NamespaceId": Object {
-          "Fn::GetAtt": Array [
+        "NamespaceId": {
+          "Fn::GetAtt": [
             "ClusterDefaultServiceDiscoveryNamespaceD29986FD",
             "Id",
           ],
@@ -149,16 +165,16 @@ Object {
       },
       "Type": "AWS::ServiceDiscovery::Service",
     },
-    "ClusterRouterRouterRecordpublicdomain2B490638": Object {
-      "Properties": Object {
-        "AliasTarget": Object {
-          "DNSName": Object {
-            "Fn::Join": Array [
+    "ClusterRouterRouterRecordpublicdomain2B490638": {
+      "Properties": {
+        "AliasTarget": {
+          "DNSName": {
+            "Fn::Join": [
               "",
-              Array [
+              [
                 "dualstack.",
-                Object {
-                  "Fn::GetAtt": Array [
+                {
+                  "Fn::GetAtt": [
                     "ClusterRouterLoadBalancer1D918095",
                     "DNSName",
                   ],
@@ -166,8 +182,8 @@ Object {
               ],
             ],
           },
-          "HostedZoneId": Object {
-            "Fn::GetAtt": Array [
+          "HostedZoneId": {
+            "Fn::GetAtt": [
               "ClusterRouterLoadBalancer1D918095",
               "CanonicalHostedZoneID",
             ],
@@ -179,14 +195,14 @@ Object {
       },
       "Type": "AWS::Route53::RecordSet",
     },
-    "ClusterRouterRouterTaskRoleE8B7AD7C": Object {
-      "Properties": Object {
-        "AssumeRolePolicyDocument": Object {
-          "Statement": Array [
-            Object {
+    "ClusterRouterRouterTaskRoleE8B7AD7C": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
               "Action": "sts:AssumeRole",
               "Effect": "Allow",
-              "Principal": Object {
+              "Principal": {
                 "Service": "ecs-tasks.amazonaws.com",
               },
             },
@@ -194,12 +210,12 @@ Object {
           "Version": "2012-10-17",
         },
         "Description": "Role that router service container assumes so that it communicate with ECS and EC2 APIs to auto-detect services (containers) to route traffic to",
-        "Policies": Array [
-          Object {
-            "PolicyDocument": Object {
-              "Statement": Array [
-                Object {
-                  "Action": Array [
+        "Policies": [
+          {
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Action": [
                     "ec2:DescribeInstances",
                     "ecs:ListClusters",
                     "ecs:DescribeClusters",
@@ -220,16 +236,16 @@ Object {
       },
       "Type": "AWS::IAM::Role",
     },
-    "ClusterRouterServiceA6DA0C86": Object {
-      "DependsOn": Array [
+    "ClusterRouterServiceA6DA0C86": {
+      "DependsOn": [
         "ClusterRouterLoadBalancerHttpListenerEcsServiceGroup644FD2FA",
         "ClusterRouterLoadBalancerHttpListener5011B408",
       ],
-      "Properties": Object {
-        "Cluster": Object {
+      "Properties": {
+        "Cluster": {
           "Ref": "ClusterC2E21B66",
         },
-        "DeploymentConfiguration": Object {
+        "DeploymentConfiguration": {
           "MaximumPercent": 200,
           "MinimumHealthyPercent": 50,
         },
@@ -237,84 +253,84 @@ Object {
         "EnableECSManagedTags": false,
         "HealthCheckGracePeriodSeconds": 60,
         "LaunchType": "FARGATE",
-        "LoadBalancers": Array [
-          Object {
+        "LoadBalancers": [
+          {
             "ContainerName": "Container",
             "ContainerPort": 80,
-            "TargetGroupArn": Object {
+            "TargetGroupArn": {
               "Ref": "ClusterRouterLoadBalancerHttpListenerEcsServiceGroup644FD2FA",
             },
           },
         ],
-        "NetworkConfiguration": Object {
-          "AwsvpcConfiguration": Object {
+        "NetworkConfiguration": {
+          "AwsvpcConfiguration": {
             "AssignPublicIp": "DISABLED",
-            "SecurityGroups": Array [
-              Object {
-                "Fn::GetAtt": Array [
+            "SecurityGroups": [
+              {
+                "Fn::GetAtt": [
                   "ClusterRouterServiceSecurityGroupCBEC2A56",
                   "GroupId",
                 ],
               },
             ],
-            "Subnets": Array [
-              Object {
+            "Subnets": [
+              {
                 "Ref": "ClusterVpcPrivateSubnet1SubnetA4EB481A",
               },
-              Object {
+              {
                 "Ref": "ClusterVpcPrivateSubnet2SubnetBD1ECB6E",
               },
-              Object {
+              {
                 "Ref": "ClusterVpcPrivateSubnet3Subnet2479B8E0",
               },
             ],
           },
         },
-        "ServiceRegistries": Array [
-          Object {
-            "RegistryArn": Object {
-              "Fn::GetAtt": Array [
+        "ServiceRegistries": [
+          {
+            "RegistryArn": {
+              "Fn::GetAtt": [
                 "ClusterRouterNamespaceRecord89A640AB",
                 "Arn",
               ],
             },
           },
         ],
-        "TaskDefinition": Object {
+        "TaskDefinition": {
           "Ref": "ClusterRouterTaskDefinition89C7182E",
         },
       },
       "Type": "AWS::ECS::Service",
     },
-    "ClusterRouterServiceSecurityGroupCBEC2A56": Object {
-      "Properties": Object {
+    "ClusterRouterServiceSecurityGroupCBEC2A56": {
+      "Properties": {
         "GroupDescription": "Stack/Cluster/Router/Service/SecurityGroup",
-        "SecurityGroupEgress": Array [
-          Object {
+        "SecurityGroupEgress": [
+          {
             "CidrIp": "0.0.0.0/0",
             "Description": "Allow all outbound traffic by default",
             "IpProtocol": "-1",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::SecurityGroup",
     },
-    "ClusterRouterServiceSecurityGroupfromStackClusterRouterLoadBalancerSecurityGroup5D5E07D38051C9CF5F": Object {
-      "Properties": Object {
+    "ClusterRouterServiceSecurityGroupfromStackClusterRouterLoadBalancerSecurityGroup5D5E07D38051C9CF5F": {
+      "Properties": {
         "Description": "Load balancer to target",
         "FromPort": 80,
-        "GroupId": Object {
-          "Fn::GetAtt": Array [
+        "GroupId": {
+          "Fn::GetAtt": [
             "ClusterRouterServiceSecurityGroupCBEC2A56",
             "GroupId",
           ],
         },
         "IpProtocol": "tcp",
-        "SourceSecurityGroupId": Object {
-          "Fn::GetAtt": Array [
+        "SourceSecurityGroupId": {
+          "Fn::GetAtt": [
             "ClusterRouterLoadBalancerSecurityGroupE1E5F3D9",
             "GroupId",
           ],
@@ -323,62 +339,62 @@ Object {
       },
       "Type": "AWS::EC2::SecurityGroupIngress",
     },
-    "ClusterRouterTaskDefinition89C7182E": Object {
-      "Properties": Object {
-        "ContainerDefinitions": Array [
-          Object {
-            "Environment": Array [
-              Object {
+    "ClusterRouterTaskDefinition89C7182E": {
+      "Properties": {
+        "ContainerDefinitions": [
+          {
+            "Environment": [
+              {
                 "Name": "TRAEFIK_ENTRYPOINTS_HTTP",
                 "Value": "true",
               },
-              Object {
+              {
                 "Name": "TRAEFIK_ENTRYPOINTS_HTTP_ADDRESS",
                 "Value": ":80",
               },
-              Object {
+              {
                 "Name": "TRAEFIK_LOG",
                 "Value": "true",
               },
-              Object {
+              {
                 "Name": "TRAEFIK_LOG_LEVEL",
                 "Value": "ERROR",
               },
-              Object {
+              {
                 "Name": "TRAEFIK_PING",
                 "Value": "true",
               },
-              Object {
+              {
                 "Name": "TRAEFIK_PING_ENTRYPOINT",
                 "Value": "http",
               },
-              Object {
+              {
                 "Name": "TRAEFIK_PROVIDERS_ECS",
                 "Value": "true",
               },
-              Object {
+              {
                 "Name": "TRAEFIK_PROVIDERS_ECS_REFRESHSECONDS",
                 "Value": "10",
               },
-              Object {
+              {
                 "Name": "TRAEFIK_PROVIDERS_ECS_CLUSTERS",
-                "Value": Object {
+                "Value": {
                   "Ref": "ClusterC2E21B66",
                 },
               },
-              Object {
+              {
                 "Name": "TRAEFIK_PROVIDERS_ECS_REGION",
-                "Value": Object {
+                "Value": {
                   "Ref": "AWS::Region",
                 },
               },
             ],
             "Essential": true,
             "Image": "traefik:2.4",
-            "LogConfiguration": Object {
+            "LogConfiguration": {
               "LogDriver": "awslogs",
-              "Options": Object {
-                "awslogs-group": Object {
+              "Options": {
+                "awslogs-group": {
                   "Ref": "ClusterRouterTaskDefinitionContainerLogGroupD0031984",
                 },
                 "awslogs-region": "us-east-1",
@@ -386,8 +402,8 @@ Object {
               },
             },
             "Name": "Container",
-            "PortMappings": Array [
-              Object {
+            "PortMappings": [
+              {
                 "ContainerPort": 80,
                 "HostPort": 80,
                 "Protocol": "tcp",
@@ -396,8 +412,8 @@ Object {
           },
         ],
         "Cpu": "256",
-        "ExecutionRoleArn": Object {
-          "Fn::GetAtt": Array [
+        "ExecutionRoleArn": {
+          "Fn::GetAtt": [
             "ClusterRouterTaskDefinitionExecutionRole68739FF3",
             "Arn",
           ],
@@ -405,11 +421,11 @@ Object {
         "Family": "StackClusterRouterTaskDefinition757F7833",
         "Memory": "512",
         "NetworkMode": "awsvpc",
-        "RequiresCompatibilities": Array [
+        "RequiresCompatibilities": [
           "FARGATE",
         ],
-        "TaskRoleArn": Object {
-          "Fn::GetAtt": Array [
+        "TaskRoleArn": {
+          "Fn::GetAtt": [
             "ClusterRouterRouterTaskRoleE8B7AD7C",
             "Arn",
           ],
@@ -417,22 +433,22 @@ Object {
       },
       "Type": "AWS::ECS::TaskDefinition",
     },
-    "ClusterRouterTaskDefinitionContainerLogGroupD0031984": Object {
+    "ClusterRouterTaskDefinitionContainerLogGroupD0031984": {
       "DeletionPolicy": "Retain",
-      "Properties": Object {
+      "Properties": {
         "RetentionInDays": 7,
       },
       "Type": "AWS::Logs::LogGroup",
       "UpdateReplacePolicy": "Retain",
     },
-    "ClusterRouterTaskDefinitionExecutionRole68739FF3": Object {
-      "Properties": Object {
-        "AssumeRolePolicyDocument": Object {
-          "Statement": Array [
-            Object {
+    "ClusterRouterTaskDefinitionExecutionRole68739FF3": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
               "Action": "sts:AssumeRole",
               "Effect": "Allow",
-              "Principal": Object {
+              "Principal": {
                 "Service": "ecs-tasks.amazonaws.com",
               },
             },
@@ -442,18 +458,18 @@ Object {
       },
       "Type": "AWS::IAM::Role",
     },
-    "ClusterRouterTaskDefinitionExecutionRoleDefaultPolicyBF8479E0": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": Array [
+    "ClusterRouterTaskDefinitionExecutionRoleDefaultPolicyBF8479E0": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
                 "logs:CreateLogStream",
                 "logs:PutLogEvents",
               ],
               "Effect": "Allow",
-              "Resource": Object {
-                "Fn::GetAtt": Array [
+              "Resource": {
+                "Fn::GetAtt": [
                   "ClusterRouterTaskDefinitionContainerLogGroupD0031984",
                   "Arn",
                 ],
@@ -463,22 +479,22 @@ Object {
           "Version": "2012-10-17",
         },
         "PolicyName": "ClusterRouterTaskDefinitionExecutionRoleDefaultPolicyBF8479E0",
-        "Roles": Array [
-          Object {
+        "Roles": [
+          {
             "Ref": "ClusterRouterTaskDefinitionExecutionRole68739FF3",
           },
         ],
       },
       "Type": "AWS::IAM::Policy",
     },
-    "ClusterVpcFAA3CEDF": Object {
-      "Properties": Object {
+    "ClusterVpcFAA3CEDF": {
+      "Properties": {
         "CidrBlock": "10.0.0.0/16",
         "EnableDnsHostnames": true,
         "EnableDnsSupport": true,
         "InstanceTenancy": "default",
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc",
           },
@@ -486,10 +502,10 @@ Object {
       },
       "Type": "AWS::EC2::VPC",
     },
-    "ClusterVpcIGW1E358A6E": Object {
-      "Properties": Object {
-        "Tags": Array [
-          Object {
+    "ClusterVpcIGW1E358A6E": {
+      "Properties": {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc",
           },
@@ -497,212 +513,212 @@ Object {
       },
       "Type": "AWS::EC2::InternetGateway",
     },
-    "ClusterVpcPrivateSubnet1DefaultRoute3B4D40DD": Object {
-      "Properties": Object {
+    "ClusterVpcPrivateSubnet1DefaultRoute3B4D40DD": {
+      "Properties": {
         "DestinationCidrBlock": "0.0.0.0/0",
-        "NatGatewayId": Object {
+        "NatGatewayId": {
           "Ref": "ClusterVpcPublicSubnet1NATGateway0693C346",
         },
-        "RouteTableId": Object {
+        "RouteTableId": {
           "Ref": "ClusterVpcPrivateSubnet1RouteTable5AAEDA3F",
         },
       },
       "Type": "AWS::EC2::Route",
     },
-    "ClusterVpcPrivateSubnet1RouteTable5AAEDA3F": Object {
-      "Properties": Object {
-        "Tags": Array [
-          Object {
+    "ClusterVpcPrivateSubnet1RouteTable5AAEDA3F": {
+      "Properties": {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PrivateSubnet1",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::RouteTable",
     },
-    "ClusterVpcPrivateSubnet1RouteTableAssociation9B8A88D9": Object {
-      "Properties": Object {
-        "RouteTableId": Object {
+    "ClusterVpcPrivateSubnet1RouteTableAssociation9B8A88D9": {
+      "Properties": {
+        "RouteTableId": {
           "Ref": "ClusterVpcPrivateSubnet1RouteTable5AAEDA3F",
         },
-        "SubnetId": Object {
+        "SubnetId": {
           "Ref": "ClusterVpcPrivateSubnet1SubnetA4EB481A",
         },
       },
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
     },
-    "ClusterVpcPrivateSubnet1SubnetA4EB481A": Object {
-      "Properties": Object {
+    "ClusterVpcPrivateSubnet1SubnetA4EB481A": {
+      "Properties": {
         "AvailabilityZone": "dummy1a",
         "CidrBlock": "10.0.96.0/19",
         "MapPublicIpOnLaunch": false,
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "aws-cdk:subnet-name",
             "Value": "Private",
           },
-          Object {
+          {
             "Key": "aws-cdk:subnet-type",
             "Value": "Private",
           },
-          Object {
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PrivateSubnet1",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::Subnet",
     },
-    "ClusterVpcPrivateSubnet2DefaultRoute011666AF": Object {
-      "Properties": Object {
+    "ClusterVpcPrivateSubnet2DefaultRoute011666AF": {
+      "Properties": {
         "DestinationCidrBlock": "0.0.0.0/0",
-        "NatGatewayId": Object {
+        "NatGatewayId": {
           "Ref": "ClusterVpcPublicSubnet2NATGateway00B24686",
         },
-        "RouteTableId": Object {
+        "RouteTableId": {
           "Ref": "ClusterVpcPrivateSubnet2RouteTable73064A66",
         },
       },
       "Type": "AWS::EC2::Route",
     },
-    "ClusterVpcPrivateSubnet2RouteTable73064A66": Object {
-      "Properties": Object {
-        "Tags": Array [
-          Object {
+    "ClusterVpcPrivateSubnet2RouteTable73064A66": {
+      "Properties": {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PrivateSubnet2",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::RouteTable",
     },
-    "ClusterVpcPrivateSubnet2RouteTableAssociationFB21349E": Object {
-      "Properties": Object {
-        "RouteTableId": Object {
+    "ClusterVpcPrivateSubnet2RouteTableAssociationFB21349E": {
+      "Properties": {
+        "RouteTableId": {
           "Ref": "ClusterVpcPrivateSubnet2RouteTable73064A66",
         },
-        "SubnetId": Object {
+        "SubnetId": {
           "Ref": "ClusterVpcPrivateSubnet2SubnetBD1ECB6E",
         },
       },
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
     },
-    "ClusterVpcPrivateSubnet2SubnetBD1ECB6E": Object {
-      "Properties": Object {
+    "ClusterVpcPrivateSubnet2SubnetBD1ECB6E": {
+      "Properties": {
         "AvailabilityZone": "dummy1b",
         "CidrBlock": "10.0.128.0/19",
         "MapPublicIpOnLaunch": false,
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "aws-cdk:subnet-name",
             "Value": "Private",
           },
-          Object {
+          {
             "Key": "aws-cdk:subnet-type",
             "Value": "Private",
           },
-          Object {
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PrivateSubnet2",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::Subnet",
     },
-    "ClusterVpcPrivateSubnet3DefaultRoute90E9BC37": Object {
-      "Properties": Object {
+    "ClusterVpcPrivateSubnet3DefaultRoute90E9BC37": {
+      "Properties": {
         "DestinationCidrBlock": "0.0.0.0/0",
-        "NatGatewayId": Object {
+        "NatGatewayId": {
           "Ref": "ClusterVpcPublicSubnet3NATGateway1CA7B94F",
         },
-        "RouteTableId": Object {
+        "RouteTableId": {
           "Ref": "ClusterVpcPrivateSubnet3RouteTable941ABA3E",
         },
       },
       "Type": "AWS::EC2::Route",
     },
-    "ClusterVpcPrivateSubnet3RouteTable941ABA3E": Object {
-      "Properties": Object {
-        "Tags": Array [
-          Object {
+    "ClusterVpcPrivateSubnet3RouteTable941ABA3E": {
+      "Properties": {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PrivateSubnet3",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::RouteTable",
     },
-    "ClusterVpcPrivateSubnet3RouteTableAssociationB0D482EA": Object {
-      "Properties": Object {
-        "RouteTableId": Object {
+    "ClusterVpcPrivateSubnet3RouteTableAssociationB0D482EA": {
+      "Properties": {
+        "RouteTableId": {
           "Ref": "ClusterVpcPrivateSubnet3RouteTable941ABA3E",
         },
-        "SubnetId": Object {
+        "SubnetId": {
           "Ref": "ClusterVpcPrivateSubnet3Subnet2479B8E0",
         },
       },
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
     },
-    "ClusterVpcPrivateSubnet3Subnet2479B8E0": Object {
-      "Properties": Object {
+    "ClusterVpcPrivateSubnet3Subnet2479B8E0": {
+      "Properties": {
         "AvailabilityZone": "dummy1c",
         "CidrBlock": "10.0.160.0/19",
         "MapPublicIpOnLaunch": false,
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "aws-cdk:subnet-name",
             "Value": "Private",
           },
-          Object {
+          {
             "Key": "aws-cdk:subnet-type",
             "Value": "Private",
           },
-          Object {
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PrivateSubnet3",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::Subnet",
     },
-    "ClusterVpcPublicSubnet1DefaultRoute62DA4B4B": Object {
-      "DependsOn": Array [
+    "ClusterVpcPublicSubnet1DefaultRoute62DA4B4B": {
+      "DependsOn": [
         "ClusterVpcVPCGW47AC17E9",
       ],
-      "Properties": Object {
+      "Properties": {
         "DestinationCidrBlock": "0.0.0.0/0",
-        "GatewayId": Object {
+        "GatewayId": {
           "Ref": "ClusterVpcIGW1E358A6E",
         },
-        "RouteTableId": Object {
+        "RouteTableId": {
           "Ref": "ClusterVpcPublicSubnet1RouteTable5594A636",
         },
       },
       "Type": "AWS::EC2::Route",
     },
-    "ClusterVpcPublicSubnet1EIP433C56EE": Object {
-      "Properties": Object {
+    "ClusterVpcPublicSubnet1EIP433C56EE": {
+      "Properties": {
         "Domain": "vpc",
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PublicSubnet1",
           },
@@ -710,19 +726,23 @@ Object {
       },
       "Type": "AWS::EC2::EIP",
     },
-    "ClusterVpcPublicSubnet1NATGateway0693C346": Object {
-      "Properties": Object {
-        "AllocationId": Object {
-          "Fn::GetAtt": Array [
+    "ClusterVpcPublicSubnet1NATGateway0693C346": {
+      "DependsOn": [
+        "ClusterVpcPublicSubnet1DefaultRoute62DA4B4B",
+        "ClusterVpcPublicSubnet1RouteTableAssociation0FBEF1F4",
+      ],
+      "Properties": {
+        "AllocationId": {
+          "Fn::GetAtt": [
             "ClusterVpcPublicSubnet1EIP433C56EE",
             "AllocationId",
           ],
         },
-        "SubnetId": Object {
+        "SubnetId": {
           "Ref": "ClusterVpcPublicSubnet1SubnetA9F7E0A5",
         },
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PublicSubnet1",
           },
@@ -730,76 +750,76 @@ Object {
       },
       "Type": "AWS::EC2::NatGateway",
     },
-    "ClusterVpcPublicSubnet1RouteTable5594A636": Object {
-      "Properties": Object {
-        "Tags": Array [
-          Object {
+    "ClusterVpcPublicSubnet1RouteTable5594A636": {
+      "Properties": {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PublicSubnet1",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::RouteTable",
     },
-    "ClusterVpcPublicSubnet1RouteTableAssociation0FBEF1F4": Object {
-      "Properties": Object {
-        "RouteTableId": Object {
+    "ClusterVpcPublicSubnet1RouteTableAssociation0FBEF1F4": {
+      "Properties": {
+        "RouteTableId": {
           "Ref": "ClusterVpcPublicSubnet1RouteTable5594A636",
         },
-        "SubnetId": Object {
+        "SubnetId": {
           "Ref": "ClusterVpcPublicSubnet1SubnetA9F7E0A5",
         },
       },
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
     },
-    "ClusterVpcPublicSubnet1SubnetA9F7E0A5": Object {
-      "Properties": Object {
+    "ClusterVpcPublicSubnet1SubnetA9F7E0A5": {
+      "Properties": {
         "AvailabilityZone": "dummy1a",
         "CidrBlock": "10.0.0.0/19",
         "MapPublicIpOnLaunch": true,
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "aws-cdk:subnet-name",
             "Value": "Public",
           },
-          Object {
+          {
             "Key": "aws-cdk:subnet-type",
             "Value": "Public",
           },
-          Object {
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PublicSubnet1",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::Subnet",
     },
-    "ClusterVpcPublicSubnet2DefaultRoute97446C8A": Object {
-      "DependsOn": Array [
+    "ClusterVpcPublicSubnet2DefaultRoute97446C8A": {
+      "DependsOn": [
         "ClusterVpcVPCGW47AC17E9",
       ],
-      "Properties": Object {
+      "Properties": {
         "DestinationCidrBlock": "0.0.0.0/0",
-        "GatewayId": Object {
+        "GatewayId": {
           "Ref": "ClusterVpcIGW1E358A6E",
         },
-        "RouteTableId": Object {
+        "RouteTableId": {
           "Ref": "ClusterVpcPublicSubnet2RouteTable7B43F18C",
         },
       },
       "Type": "AWS::EC2::Route",
     },
-    "ClusterVpcPublicSubnet2EIP203DF3E5": Object {
-      "Properties": Object {
+    "ClusterVpcPublicSubnet2EIP203DF3E5": {
+      "Properties": {
         "Domain": "vpc",
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PublicSubnet2",
           },
@@ -807,19 +827,23 @@ Object {
       },
       "Type": "AWS::EC2::EIP",
     },
-    "ClusterVpcPublicSubnet2NATGateway00B24686": Object {
-      "Properties": Object {
-        "AllocationId": Object {
-          "Fn::GetAtt": Array [
+    "ClusterVpcPublicSubnet2NATGateway00B24686": {
+      "DependsOn": [
+        "ClusterVpcPublicSubnet2DefaultRoute97446C8A",
+        "ClusterVpcPublicSubnet2RouteTableAssociation8446B27D",
+      ],
+      "Properties": {
+        "AllocationId": {
+          "Fn::GetAtt": [
             "ClusterVpcPublicSubnet2EIP203DF3E5",
             "AllocationId",
           ],
         },
-        "SubnetId": Object {
+        "SubnetId": {
           "Ref": "ClusterVpcPublicSubnet2Subnet059113C4",
         },
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PublicSubnet2",
           },
@@ -827,76 +851,76 @@ Object {
       },
       "Type": "AWS::EC2::NatGateway",
     },
-    "ClusterVpcPublicSubnet2RouteTable7B43F18C": Object {
-      "Properties": Object {
-        "Tags": Array [
-          Object {
+    "ClusterVpcPublicSubnet2RouteTable7B43F18C": {
+      "Properties": {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PublicSubnet2",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::RouteTable",
     },
-    "ClusterVpcPublicSubnet2RouteTableAssociation8446B27D": Object {
-      "Properties": Object {
-        "RouteTableId": Object {
+    "ClusterVpcPublicSubnet2RouteTableAssociation8446B27D": {
+      "Properties": {
+        "RouteTableId": {
           "Ref": "ClusterVpcPublicSubnet2RouteTable7B43F18C",
         },
-        "SubnetId": Object {
+        "SubnetId": {
           "Ref": "ClusterVpcPublicSubnet2Subnet059113C4",
         },
       },
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
     },
-    "ClusterVpcPublicSubnet2Subnet059113C4": Object {
-      "Properties": Object {
+    "ClusterVpcPublicSubnet2Subnet059113C4": {
+      "Properties": {
         "AvailabilityZone": "dummy1b",
         "CidrBlock": "10.0.32.0/19",
         "MapPublicIpOnLaunch": true,
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "aws-cdk:subnet-name",
             "Value": "Public",
           },
-          Object {
+          {
             "Key": "aws-cdk:subnet-type",
             "Value": "Public",
           },
-          Object {
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PublicSubnet2",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::Subnet",
     },
-    "ClusterVpcPublicSubnet3DefaultRoute772CA282": Object {
-      "DependsOn": Array [
+    "ClusterVpcPublicSubnet3DefaultRoute772CA282": {
+      "DependsOn": [
         "ClusterVpcVPCGW47AC17E9",
       ],
-      "Properties": Object {
+      "Properties": {
         "DestinationCidrBlock": "0.0.0.0/0",
-        "GatewayId": Object {
+        "GatewayId": {
           "Ref": "ClusterVpcIGW1E358A6E",
         },
-        "RouteTableId": Object {
+        "RouteTableId": {
           "Ref": "ClusterVpcPublicSubnet3RouteTable6810F4F3",
         },
       },
       "Type": "AWS::EC2::Route",
     },
-    "ClusterVpcPublicSubnet3EIP2AEE6537": Object {
-      "Properties": Object {
+    "ClusterVpcPublicSubnet3EIP2AEE6537": {
+      "Properties": {
         "Domain": "vpc",
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PublicSubnet3",
           },
@@ -904,19 +928,23 @@ Object {
       },
       "Type": "AWS::EC2::EIP",
     },
-    "ClusterVpcPublicSubnet3NATGateway1CA7B94F": Object {
-      "Properties": Object {
-        "AllocationId": Object {
-          "Fn::GetAtt": Array [
+    "ClusterVpcPublicSubnet3NATGateway1CA7B94F": {
+      "DependsOn": [
+        "ClusterVpcPublicSubnet3DefaultRoute772CA282",
+        "ClusterVpcPublicSubnet3RouteTableAssociationD919DEF1",
+      ],
+      "Properties": {
+        "AllocationId": {
+          "Fn::GetAtt": [
             "ClusterVpcPublicSubnet3EIP2AEE6537",
             "AllocationId",
           ],
         },
-        "SubnetId": Object {
+        "SubnetId": {
           "Ref": "ClusterVpcPublicSubnet3Subnet3AB4E59C",
         },
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PublicSubnet3",
           },
@@ -924,112 +952,148 @@ Object {
       },
       "Type": "AWS::EC2::NatGateway",
     },
-    "ClusterVpcPublicSubnet3RouteTable6810F4F3": Object {
-      "Properties": Object {
-        "Tags": Array [
-          Object {
+    "ClusterVpcPublicSubnet3RouteTable6810F4F3": {
+      "Properties": {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PublicSubnet3",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::RouteTable",
     },
-    "ClusterVpcPublicSubnet3RouteTableAssociationD919DEF1": Object {
-      "Properties": Object {
-        "RouteTableId": Object {
+    "ClusterVpcPublicSubnet3RouteTableAssociationD919DEF1": {
+      "Properties": {
+        "RouteTableId": {
           "Ref": "ClusterVpcPublicSubnet3RouteTable6810F4F3",
         },
-        "SubnetId": Object {
+        "SubnetId": {
           "Ref": "ClusterVpcPublicSubnet3Subnet3AB4E59C",
         },
       },
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
     },
-    "ClusterVpcPublicSubnet3Subnet3AB4E59C": Object {
-      "Properties": Object {
+    "ClusterVpcPublicSubnet3Subnet3AB4E59C": {
+      "Properties": {
         "AvailabilityZone": "dummy1c",
         "CidrBlock": "10.0.64.0/19",
         "MapPublicIpOnLaunch": true,
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "aws-cdk:subnet-name",
             "Value": "Public",
           },
-          Object {
+          {
             "Key": "aws-cdk:subnet-type",
             "Value": "Public",
           },
-          Object {
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PublicSubnet3",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::Subnet",
     },
-    "ClusterVpcVPCGW47AC17E9": Object {
-      "Properties": Object {
-        "InternetGatewayId": Object {
+    "ClusterVpcVPCGW47AC17E9": {
+      "Properties": {
+        "InternetGatewayId": {
           "Ref": "ClusterVpcIGW1E358A6E",
         },
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::VPCGatewayAttachment",
     },
   },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                  ],
+                  {
+                    "Ref": "BootstrapVersion",
+                  },
+                ],
+              },
+            ],
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.",
+        },
+      ],
+    },
+  },
 }
 `;
 
 exports[`Runtime Cluster Limited AZs Matches Snapshot 1`] = `
-Object {
-  "Resources": Object {
-    "ClusterC2E21B66": Object {
+{
+  "Parameters": {
+    "BootstrapVersion": {
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+  },
+  "Resources": {
+    "ClusterC2E21B66": {
       "Type": "AWS::ECS::Cluster",
     },
-    "ClusterDefaultServiceDiscoveryNamespaceD29986FD": Object {
-      "Properties": Object {
+    "ClusterDefaultServiceDiscoveryNamespaceD29986FD": {
+      "Properties": {
         "Name": "private.domain",
-        "Vpc": Object {
+        "Vpc": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::ServiceDiscovery::PrivateDnsNamespace",
     },
-    "ClusterRouterLoadBalancer1D918095": Object {
-      "DependsOn": Array [
+    "ClusterRouterLoadBalancer1D918095": {
+      "DependsOn": [
         "ClusterVpcPublicSubnet1DefaultRoute62DA4B4B",
+        "ClusterVpcPublicSubnet1RouteTableAssociation0FBEF1F4",
         "ClusterVpcPublicSubnet2DefaultRoute97446C8A",
+        "ClusterVpcPublicSubnet2RouteTableAssociation8446B27D",
       ],
-      "Properties": Object {
-        "LoadBalancerAttributes": Array [
-          Object {
+      "Properties": {
+        "LoadBalancerAttributes": [
+          {
             "Key": "deletion_protection.enabled",
             "Value": "false",
           },
         ],
         "Scheme": "internet-facing",
-        "SecurityGroups": Array [
-          Object {
-            "Fn::GetAtt": Array [
+        "SecurityGroups": [
+          {
+            "Fn::GetAtt": [
               "ClusterRouterLoadBalancerSecurityGroupE1E5F3D9",
               "GroupId",
             ],
           },
         ],
-        "Subnets": Array [
-          Object {
+        "Subnets": [
+          {
             "Ref": "ClusterVpcPublicSubnet1SubnetA9F7E0A5",
           },
-          Object {
+          {
             "Ref": "ClusterVpcPublicSubnet2Subnet059113C4",
           },
         ],
@@ -1037,17 +1101,17 @@ Object {
       },
       "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
     },
-    "ClusterRouterLoadBalancerHttpListener5011B408": Object {
-      "Properties": Object {
-        "DefaultActions": Array [
-          Object {
-            "TargetGroupArn": Object {
+    "ClusterRouterLoadBalancerHttpListener5011B408": {
+      "Properties": {
+        "DefaultActions": [
+          {
+            "TargetGroupArn": {
               "Ref": "ClusterRouterLoadBalancerHttpListenerEcsServiceGroup644FD2FA",
             },
             "Type": "forward",
           },
         ],
-        "LoadBalancerArn": Object {
+        "LoadBalancerArn": {
           "Ref": "ClusterRouterLoadBalancer1D918095",
         },
         "Port": 80,
@@ -1055,23 +1119,29 @@ Object {
       },
       "Type": "AWS::ElasticLoadBalancingV2::Listener",
     },
-    "ClusterRouterLoadBalancerHttpListenerEcsServiceGroup644FD2FA": Object {
-      "Properties": Object {
+    "ClusterRouterLoadBalancerHttpListenerEcsServiceGroup644FD2FA": {
+      "Properties": {
         "HealthCheckPath": "/ping",
         "Port": 80,
         "Protocol": "HTTP",
+        "TargetGroupAttributes": [
+          {
+            "Key": "stickiness.enabled",
+            "Value": "false",
+          },
+        ],
         "TargetType": "ip",
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
     },
-    "ClusterRouterLoadBalancerSecurityGroupE1E5F3D9": Object {
-      "Properties": Object {
+    "ClusterRouterLoadBalancerSecurityGroupE1E5F3D9": {
+      "Properties": {
         "GroupDescription": "Automatically created Security Group for ELB StackClusterRouterLoadBalancer49BEBF7D",
-        "SecurityGroupIngress": Array [
-          Object {
+        "SecurityGroupIngress": [
+          {
             "CidrIp": "0.0.0.0/0",
             "Description": "Allow from anyone on port 80",
             "FromPort": 80,
@@ -1079,24 +1149,24 @@ Object {
             "ToPort": 80,
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::SecurityGroup",
     },
-    "ClusterRouterLoadBalancerSecurityGrouptoStackClusterRouterServiceSecurityGroupDD1CDD3B805BD321E7": Object {
-      "Properties": Object {
+    "ClusterRouterLoadBalancerSecurityGrouptoStackClusterRouterServiceSecurityGroupDD1CDD3B805BD321E7": {
+      "Properties": {
         "Description": "Load balancer to target",
-        "DestinationSecurityGroupId": Object {
-          "Fn::GetAtt": Array [
+        "DestinationSecurityGroupId": {
+          "Fn::GetAtt": [
             "ClusterRouterServiceSecurityGroupCBEC2A56",
             "GroupId",
           ],
         },
         "FromPort": 80,
-        "GroupId": Object {
-          "Fn::GetAtt": Array [
+        "GroupId": {
+          "Fn::GetAtt": [
             "ClusterRouterLoadBalancerSecurityGroupE1E5F3D9",
             "GroupId",
           ],
@@ -1106,18 +1176,18 @@ Object {
       },
       "Type": "AWS::EC2::SecurityGroupEgress",
     },
-    "ClusterRouterNamespaceRecord89A640AB": Object {
-      "Properties": Object {
+    "ClusterRouterNamespaceRecord89A640AB": {
+      "Properties": {
         "Description": "Traefik router",
-        "DnsConfig": Object {
-          "DnsRecords": Array [
-            Object {
+        "DnsConfig": {
+          "DnsRecords": [
+            {
               "TTL": 60,
               "Type": "A",
             },
           ],
-          "NamespaceId": Object {
-            "Fn::GetAtt": Array [
+          "NamespaceId": {
+            "Fn::GetAtt": [
               "ClusterDefaultServiceDiscoveryNamespaceD29986FD",
               "Id",
             ],
@@ -1125,8 +1195,8 @@ Object {
           "RoutingPolicy": "MULTIVALUE",
         },
         "Name": "_router",
-        "NamespaceId": Object {
-          "Fn::GetAtt": Array [
+        "NamespaceId": {
+          "Fn::GetAtt": [
             "ClusterDefaultServiceDiscoveryNamespaceD29986FD",
             "Id",
           ],
@@ -1134,16 +1204,16 @@ Object {
       },
       "Type": "AWS::ServiceDiscovery::Service",
     },
-    "ClusterRouterRouterRecordpublicdomain2B490638": Object {
-      "Properties": Object {
-        "AliasTarget": Object {
-          "DNSName": Object {
-            "Fn::Join": Array [
+    "ClusterRouterRouterRecordpublicdomain2B490638": {
+      "Properties": {
+        "AliasTarget": {
+          "DNSName": {
+            "Fn::Join": [
               "",
-              Array [
+              [
                 "dualstack.",
-                Object {
-                  "Fn::GetAtt": Array [
+                {
+                  "Fn::GetAtt": [
                     "ClusterRouterLoadBalancer1D918095",
                     "DNSName",
                   ],
@@ -1151,8 +1221,8 @@ Object {
               ],
             ],
           },
-          "HostedZoneId": Object {
-            "Fn::GetAtt": Array [
+          "HostedZoneId": {
+            "Fn::GetAtt": [
               "ClusterRouterLoadBalancer1D918095",
               "CanonicalHostedZoneID",
             ],
@@ -1164,14 +1234,14 @@ Object {
       },
       "Type": "AWS::Route53::RecordSet",
     },
-    "ClusterRouterRouterTaskRoleE8B7AD7C": Object {
-      "Properties": Object {
-        "AssumeRolePolicyDocument": Object {
-          "Statement": Array [
-            Object {
+    "ClusterRouterRouterTaskRoleE8B7AD7C": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
               "Action": "sts:AssumeRole",
               "Effect": "Allow",
-              "Principal": Object {
+              "Principal": {
                 "Service": "ecs-tasks.amazonaws.com",
               },
             },
@@ -1179,12 +1249,12 @@ Object {
           "Version": "2012-10-17",
         },
         "Description": "Role that router service container assumes so that it communicate with ECS and EC2 APIs to auto-detect services (containers) to route traffic to",
-        "Policies": Array [
-          Object {
-            "PolicyDocument": Object {
-              "Statement": Array [
-                Object {
-                  "Action": Array [
+        "Policies": [
+          {
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Action": [
                     "ec2:DescribeInstances",
                     "ecs:ListClusters",
                     "ecs:DescribeClusters",
@@ -1205,16 +1275,16 @@ Object {
       },
       "Type": "AWS::IAM::Role",
     },
-    "ClusterRouterServiceA6DA0C86": Object {
-      "DependsOn": Array [
+    "ClusterRouterServiceA6DA0C86": {
+      "DependsOn": [
         "ClusterRouterLoadBalancerHttpListenerEcsServiceGroup644FD2FA",
         "ClusterRouterLoadBalancerHttpListener5011B408",
       ],
-      "Properties": Object {
-        "Cluster": Object {
+      "Properties": {
+        "Cluster": {
           "Ref": "ClusterC2E21B66",
         },
-        "DeploymentConfiguration": Object {
+        "DeploymentConfiguration": {
           "MaximumPercent": 200,
           "MinimumHealthyPercent": 50,
         },
@@ -1222,81 +1292,81 @@ Object {
         "EnableECSManagedTags": false,
         "HealthCheckGracePeriodSeconds": 60,
         "LaunchType": "FARGATE",
-        "LoadBalancers": Array [
-          Object {
+        "LoadBalancers": [
+          {
             "ContainerName": "Container",
             "ContainerPort": 80,
-            "TargetGroupArn": Object {
+            "TargetGroupArn": {
               "Ref": "ClusterRouterLoadBalancerHttpListenerEcsServiceGroup644FD2FA",
             },
           },
         ],
-        "NetworkConfiguration": Object {
-          "AwsvpcConfiguration": Object {
+        "NetworkConfiguration": {
+          "AwsvpcConfiguration": {
             "AssignPublicIp": "DISABLED",
-            "SecurityGroups": Array [
-              Object {
-                "Fn::GetAtt": Array [
+            "SecurityGroups": [
+              {
+                "Fn::GetAtt": [
                   "ClusterRouterServiceSecurityGroupCBEC2A56",
                   "GroupId",
                 ],
               },
             ],
-            "Subnets": Array [
-              Object {
+            "Subnets": [
+              {
                 "Ref": "ClusterVpcPrivateSubnet1SubnetA4EB481A",
               },
-              Object {
+              {
                 "Ref": "ClusterVpcPrivateSubnet2SubnetBD1ECB6E",
               },
             ],
           },
         },
-        "ServiceRegistries": Array [
-          Object {
-            "RegistryArn": Object {
-              "Fn::GetAtt": Array [
+        "ServiceRegistries": [
+          {
+            "RegistryArn": {
+              "Fn::GetAtt": [
                 "ClusterRouterNamespaceRecord89A640AB",
                 "Arn",
               ],
             },
           },
         ],
-        "TaskDefinition": Object {
+        "TaskDefinition": {
           "Ref": "ClusterRouterTaskDefinition89C7182E",
         },
       },
       "Type": "AWS::ECS::Service",
     },
-    "ClusterRouterServiceSecurityGroupCBEC2A56": Object {
-      "Properties": Object {
+    "ClusterRouterServiceSecurityGroupCBEC2A56": {
+      "Properties": {
         "GroupDescription": "Stack/Cluster/Router/Service/SecurityGroup",
-        "SecurityGroupEgress": Array [
-          Object {
+        "SecurityGroupEgress": [
+          {
             "CidrIp": "0.0.0.0/0",
             "Description": "Allow all outbound traffic by default",
             "IpProtocol": "-1",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::SecurityGroup",
     },
-    "ClusterRouterServiceSecurityGroupfromStackClusterRouterLoadBalancerSecurityGroup5D5E07D38051C9CF5F": Object {
-      "Properties": Object {
+    "ClusterRouterServiceSecurityGroupfromStackClusterRouterLoadBalancerSecurityGroup5D5E07D38051C9CF5F": {
+      "Properties": {
         "Description": "Load balancer to target",
         "FromPort": 80,
-        "GroupId": Object {
-          "Fn::GetAtt": Array [
+        "GroupId": {
+          "Fn::GetAtt": [
             "ClusterRouterServiceSecurityGroupCBEC2A56",
             "GroupId",
           ],
         },
         "IpProtocol": "tcp",
-        "SourceSecurityGroupId": Object {
-          "Fn::GetAtt": Array [
+        "SourceSecurityGroupId": {
+          "Fn::GetAtt": [
             "ClusterRouterLoadBalancerSecurityGroupE1E5F3D9",
             "GroupId",
           ],
@@ -1305,62 +1375,62 @@ Object {
       },
       "Type": "AWS::EC2::SecurityGroupIngress",
     },
-    "ClusterRouterTaskDefinition89C7182E": Object {
-      "Properties": Object {
-        "ContainerDefinitions": Array [
-          Object {
-            "Environment": Array [
-              Object {
+    "ClusterRouterTaskDefinition89C7182E": {
+      "Properties": {
+        "ContainerDefinitions": [
+          {
+            "Environment": [
+              {
                 "Name": "TRAEFIK_ENTRYPOINTS_HTTP",
                 "Value": "true",
               },
-              Object {
+              {
                 "Name": "TRAEFIK_ENTRYPOINTS_HTTP_ADDRESS",
                 "Value": ":80",
               },
-              Object {
+              {
                 "Name": "TRAEFIK_LOG",
                 "Value": "true",
               },
-              Object {
+              {
                 "Name": "TRAEFIK_LOG_LEVEL",
                 "Value": "ERROR",
               },
-              Object {
+              {
                 "Name": "TRAEFIK_PING",
                 "Value": "true",
               },
-              Object {
+              {
                 "Name": "TRAEFIK_PING_ENTRYPOINT",
                 "Value": "http",
               },
-              Object {
+              {
                 "Name": "TRAEFIK_PROVIDERS_ECS",
                 "Value": "true",
               },
-              Object {
+              {
                 "Name": "TRAEFIK_PROVIDERS_ECS_REFRESHSECONDS",
                 "Value": "10",
               },
-              Object {
+              {
                 "Name": "TRAEFIK_PROVIDERS_ECS_CLUSTERS",
-                "Value": Object {
+                "Value": {
                   "Ref": "ClusterC2E21B66",
                 },
               },
-              Object {
+              {
                 "Name": "TRAEFIK_PROVIDERS_ECS_REGION",
-                "Value": Object {
+                "Value": {
                   "Ref": "AWS::Region",
                 },
               },
             ],
             "Essential": true,
             "Image": "traefik:2.4",
-            "LogConfiguration": Object {
+            "LogConfiguration": {
               "LogDriver": "awslogs",
-              "Options": Object {
-                "awslogs-group": Object {
+              "Options": {
+                "awslogs-group": {
                   "Ref": "ClusterRouterTaskDefinitionContainerLogGroupD0031984",
                 },
                 "awslogs-region": "us-east-1",
@@ -1368,8 +1438,8 @@ Object {
               },
             },
             "Name": "Container",
-            "PortMappings": Array [
-              Object {
+            "PortMappings": [
+              {
                 "ContainerPort": 80,
                 "HostPort": 80,
                 "Protocol": "tcp",
@@ -1378,8 +1448,8 @@ Object {
           },
         ],
         "Cpu": "256",
-        "ExecutionRoleArn": Object {
-          "Fn::GetAtt": Array [
+        "ExecutionRoleArn": {
+          "Fn::GetAtt": [
             "ClusterRouterTaskDefinitionExecutionRole68739FF3",
             "Arn",
           ],
@@ -1387,11 +1457,11 @@ Object {
         "Family": "StackClusterRouterTaskDefinition757F7833",
         "Memory": "512",
         "NetworkMode": "awsvpc",
-        "RequiresCompatibilities": Array [
+        "RequiresCompatibilities": [
           "FARGATE",
         ],
-        "TaskRoleArn": Object {
-          "Fn::GetAtt": Array [
+        "TaskRoleArn": {
+          "Fn::GetAtt": [
             "ClusterRouterRouterTaskRoleE8B7AD7C",
             "Arn",
           ],
@@ -1399,22 +1469,22 @@ Object {
       },
       "Type": "AWS::ECS::TaskDefinition",
     },
-    "ClusterRouterTaskDefinitionContainerLogGroupD0031984": Object {
+    "ClusterRouterTaskDefinitionContainerLogGroupD0031984": {
       "DeletionPolicy": "Retain",
-      "Properties": Object {
+      "Properties": {
         "RetentionInDays": 7,
       },
       "Type": "AWS::Logs::LogGroup",
       "UpdateReplacePolicy": "Retain",
     },
-    "ClusterRouterTaskDefinitionExecutionRole68739FF3": Object {
-      "Properties": Object {
-        "AssumeRolePolicyDocument": Object {
-          "Statement": Array [
-            Object {
+    "ClusterRouterTaskDefinitionExecutionRole68739FF3": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
               "Action": "sts:AssumeRole",
               "Effect": "Allow",
-              "Principal": Object {
+              "Principal": {
                 "Service": "ecs-tasks.amazonaws.com",
               },
             },
@@ -1424,18 +1494,18 @@ Object {
       },
       "Type": "AWS::IAM::Role",
     },
-    "ClusterRouterTaskDefinitionExecutionRoleDefaultPolicyBF8479E0": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": Array [
+    "ClusterRouterTaskDefinitionExecutionRoleDefaultPolicyBF8479E0": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
                 "logs:CreateLogStream",
                 "logs:PutLogEvents",
               ],
               "Effect": "Allow",
-              "Resource": Object {
-                "Fn::GetAtt": Array [
+              "Resource": {
+                "Fn::GetAtt": [
                   "ClusterRouterTaskDefinitionContainerLogGroupD0031984",
                   "Arn",
                 ],
@@ -1445,22 +1515,22 @@ Object {
           "Version": "2012-10-17",
         },
         "PolicyName": "ClusterRouterTaskDefinitionExecutionRoleDefaultPolicyBF8479E0",
-        "Roles": Array [
-          Object {
+        "Roles": [
+          {
             "Ref": "ClusterRouterTaskDefinitionExecutionRole68739FF3",
           },
         ],
       },
       "Type": "AWS::IAM::Policy",
     },
-    "ClusterVpcFAA3CEDF": Object {
-      "Properties": Object {
+    "ClusterVpcFAA3CEDF": {
+      "Properties": {
         "CidrBlock": "10.0.0.0/16",
         "EnableDnsHostnames": true,
         "EnableDnsSupport": true,
         "InstanceTenancy": "default",
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc",
           },
@@ -1468,10 +1538,10 @@ Object {
       },
       "Type": "AWS::EC2::VPC",
     },
-    "ClusterVpcIGW1E358A6E": Object {
-      "Properties": Object {
-        "Tags": Array [
-          Object {
+    "ClusterVpcIGW1E358A6E": {
+      "Properties": {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc",
           },
@@ -1479,150 +1549,150 @@ Object {
       },
       "Type": "AWS::EC2::InternetGateway",
     },
-    "ClusterVpcPrivateSubnet1DefaultRoute3B4D40DD": Object {
-      "Properties": Object {
+    "ClusterVpcPrivateSubnet1DefaultRoute3B4D40DD": {
+      "Properties": {
         "DestinationCidrBlock": "0.0.0.0/0",
-        "NatGatewayId": Object {
+        "NatGatewayId": {
           "Ref": "ClusterVpcPublicSubnet1NATGateway0693C346",
         },
-        "RouteTableId": Object {
+        "RouteTableId": {
           "Ref": "ClusterVpcPrivateSubnet1RouteTable5AAEDA3F",
         },
       },
       "Type": "AWS::EC2::Route",
     },
-    "ClusterVpcPrivateSubnet1RouteTable5AAEDA3F": Object {
-      "Properties": Object {
-        "Tags": Array [
-          Object {
+    "ClusterVpcPrivateSubnet1RouteTable5AAEDA3F": {
+      "Properties": {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PrivateSubnet1",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::RouteTable",
     },
-    "ClusterVpcPrivateSubnet1RouteTableAssociation9B8A88D9": Object {
-      "Properties": Object {
-        "RouteTableId": Object {
+    "ClusterVpcPrivateSubnet1RouteTableAssociation9B8A88D9": {
+      "Properties": {
+        "RouteTableId": {
           "Ref": "ClusterVpcPrivateSubnet1RouteTable5AAEDA3F",
         },
-        "SubnetId": Object {
+        "SubnetId": {
           "Ref": "ClusterVpcPrivateSubnet1SubnetA4EB481A",
         },
       },
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
     },
-    "ClusterVpcPrivateSubnet1SubnetA4EB481A": Object {
-      "Properties": Object {
+    "ClusterVpcPrivateSubnet1SubnetA4EB481A": {
+      "Properties": {
         "AvailabilityZone": "dummy1a",
         "CidrBlock": "10.0.128.0/18",
         "MapPublicIpOnLaunch": false,
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "aws-cdk:subnet-name",
             "Value": "Private",
           },
-          Object {
+          {
             "Key": "aws-cdk:subnet-type",
             "Value": "Private",
           },
-          Object {
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PrivateSubnet1",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::Subnet",
     },
-    "ClusterVpcPrivateSubnet2DefaultRoute011666AF": Object {
-      "Properties": Object {
+    "ClusterVpcPrivateSubnet2DefaultRoute011666AF": {
+      "Properties": {
         "DestinationCidrBlock": "0.0.0.0/0",
-        "NatGatewayId": Object {
+        "NatGatewayId": {
           "Ref": "ClusterVpcPublicSubnet2NATGateway00B24686",
         },
-        "RouteTableId": Object {
+        "RouteTableId": {
           "Ref": "ClusterVpcPrivateSubnet2RouteTable73064A66",
         },
       },
       "Type": "AWS::EC2::Route",
     },
-    "ClusterVpcPrivateSubnet2RouteTable73064A66": Object {
-      "Properties": Object {
-        "Tags": Array [
-          Object {
+    "ClusterVpcPrivateSubnet2RouteTable73064A66": {
+      "Properties": {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PrivateSubnet2",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::RouteTable",
     },
-    "ClusterVpcPrivateSubnet2RouteTableAssociationFB21349E": Object {
-      "Properties": Object {
-        "RouteTableId": Object {
+    "ClusterVpcPrivateSubnet2RouteTableAssociationFB21349E": {
+      "Properties": {
+        "RouteTableId": {
           "Ref": "ClusterVpcPrivateSubnet2RouteTable73064A66",
         },
-        "SubnetId": Object {
+        "SubnetId": {
           "Ref": "ClusterVpcPrivateSubnet2SubnetBD1ECB6E",
         },
       },
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
     },
-    "ClusterVpcPrivateSubnet2SubnetBD1ECB6E": Object {
-      "Properties": Object {
+    "ClusterVpcPrivateSubnet2SubnetBD1ECB6E": {
+      "Properties": {
         "AvailabilityZone": "dummy1b",
         "CidrBlock": "10.0.192.0/18",
         "MapPublicIpOnLaunch": false,
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "aws-cdk:subnet-name",
             "Value": "Private",
           },
-          Object {
+          {
             "Key": "aws-cdk:subnet-type",
             "Value": "Private",
           },
-          Object {
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PrivateSubnet2",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::Subnet",
     },
-    "ClusterVpcPublicSubnet1DefaultRoute62DA4B4B": Object {
-      "DependsOn": Array [
+    "ClusterVpcPublicSubnet1DefaultRoute62DA4B4B": {
+      "DependsOn": [
         "ClusterVpcVPCGW47AC17E9",
       ],
-      "Properties": Object {
+      "Properties": {
         "DestinationCidrBlock": "0.0.0.0/0",
-        "GatewayId": Object {
+        "GatewayId": {
           "Ref": "ClusterVpcIGW1E358A6E",
         },
-        "RouteTableId": Object {
+        "RouteTableId": {
           "Ref": "ClusterVpcPublicSubnet1RouteTable5594A636",
         },
       },
       "Type": "AWS::EC2::Route",
     },
-    "ClusterVpcPublicSubnet1EIP433C56EE": Object {
-      "Properties": Object {
+    "ClusterVpcPublicSubnet1EIP433C56EE": {
+      "Properties": {
         "Domain": "vpc",
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PublicSubnet1",
           },
@@ -1630,19 +1700,23 @@ Object {
       },
       "Type": "AWS::EC2::EIP",
     },
-    "ClusterVpcPublicSubnet1NATGateway0693C346": Object {
-      "Properties": Object {
-        "AllocationId": Object {
-          "Fn::GetAtt": Array [
+    "ClusterVpcPublicSubnet1NATGateway0693C346": {
+      "DependsOn": [
+        "ClusterVpcPublicSubnet1DefaultRoute62DA4B4B",
+        "ClusterVpcPublicSubnet1RouteTableAssociation0FBEF1F4",
+      ],
+      "Properties": {
+        "AllocationId": {
+          "Fn::GetAtt": [
             "ClusterVpcPublicSubnet1EIP433C56EE",
             "AllocationId",
           ],
         },
-        "SubnetId": Object {
+        "SubnetId": {
           "Ref": "ClusterVpcPublicSubnet1SubnetA9F7E0A5",
         },
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PublicSubnet1",
           },
@@ -1650,76 +1724,76 @@ Object {
       },
       "Type": "AWS::EC2::NatGateway",
     },
-    "ClusterVpcPublicSubnet1RouteTable5594A636": Object {
-      "Properties": Object {
-        "Tags": Array [
-          Object {
+    "ClusterVpcPublicSubnet1RouteTable5594A636": {
+      "Properties": {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PublicSubnet1",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::RouteTable",
     },
-    "ClusterVpcPublicSubnet1RouteTableAssociation0FBEF1F4": Object {
-      "Properties": Object {
-        "RouteTableId": Object {
+    "ClusterVpcPublicSubnet1RouteTableAssociation0FBEF1F4": {
+      "Properties": {
+        "RouteTableId": {
           "Ref": "ClusterVpcPublicSubnet1RouteTable5594A636",
         },
-        "SubnetId": Object {
+        "SubnetId": {
           "Ref": "ClusterVpcPublicSubnet1SubnetA9F7E0A5",
         },
       },
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
     },
-    "ClusterVpcPublicSubnet1SubnetA9F7E0A5": Object {
-      "Properties": Object {
+    "ClusterVpcPublicSubnet1SubnetA9F7E0A5": {
+      "Properties": {
         "AvailabilityZone": "dummy1a",
         "CidrBlock": "10.0.0.0/18",
         "MapPublicIpOnLaunch": true,
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "aws-cdk:subnet-name",
             "Value": "Public",
           },
-          Object {
+          {
             "Key": "aws-cdk:subnet-type",
             "Value": "Public",
           },
-          Object {
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PublicSubnet1",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::Subnet",
     },
-    "ClusterVpcPublicSubnet2DefaultRoute97446C8A": Object {
-      "DependsOn": Array [
+    "ClusterVpcPublicSubnet2DefaultRoute97446C8A": {
+      "DependsOn": [
         "ClusterVpcVPCGW47AC17E9",
       ],
-      "Properties": Object {
+      "Properties": {
         "DestinationCidrBlock": "0.0.0.0/0",
-        "GatewayId": Object {
+        "GatewayId": {
           "Ref": "ClusterVpcIGW1E358A6E",
         },
-        "RouteTableId": Object {
+        "RouteTableId": {
           "Ref": "ClusterVpcPublicSubnet2RouteTable7B43F18C",
         },
       },
       "Type": "AWS::EC2::Route",
     },
-    "ClusterVpcPublicSubnet2EIP203DF3E5": Object {
-      "Properties": Object {
+    "ClusterVpcPublicSubnet2EIP203DF3E5": {
+      "Properties": {
         "Domain": "vpc",
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PublicSubnet2",
           },
@@ -1727,19 +1801,23 @@ Object {
       },
       "Type": "AWS::EC2::EIP",
     },
-    "ClusterVpcPublicSubnet2NATGateway00B24686": Object {
-      "Properties": Object {
-        "AllocationId": Object {
-          "Fn::GetAtt": Array [
+    "ClusterVpcPublicSubnet2NATGateway00B24686": {
+      "DependsOn": [
+        "ClusterVpcPublicSubnet2DefaultRoute97446C8A",
+        "ClusterVpcPublicSubnet2RouteTableAssociation8446B27D",
+      ],
+      "Properties": {
+        "AllocationId": {
+          "Fn::GetAtt": [
             "ClusterVpcPublicSubnet2EIP203DF3E5",
             "AllocationId",
           ],
         },
-        "SubnetId": Object {
+        "SubnetId": {
           "Ref": "ClusterVpcPublicSubnet2Subnet059113C4",
         },
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PublicSubnet2",
           },
@@ -1747,147 +1825,133 @@ Object {
       },
       "Type": "AWS::EC2::NatGateway",
     },
-    "ClusterVpcPublicSubnet2RouteTable7B43F18C": Object {
-      "Properties": Object {
-        "Tags": Array [
-          Object {
+    "ClusterVpcPublicSubnet2RouteTable7B43F18C": {
+      "Properties": {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PublicSubnet2",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::RouteTable",
     },
-    "ClusterVpcPublicSubnet2RouteTableAssociation8446B27D": Object {
-      "Properties": Object {
-        "RouteTableId": Object {
+    "ClusterVpcPublicSubnet2RouteTableAssociation8446B27D": {
+      "Properties": {
+        "RouteTableId": {
           "Ref": "ClusterVpcPublicSubnet2RouteTable7B43F18C",
         },
-        "SubnetId": Object {
+        "SubnetId": {
           "Ref": "ClusterVpcPublicSubnet2Subnet059113C4",
         },
       },
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
     },
-    "ClusterVpcPublicSubnet2Subnet059113C4": Object {
-      "Properties": Object {
+    "ClusterVpcPublicSubnet2Subnet059113C4": {
+      "Properties": {
         "AvailabilityZone": "dummy1b",
         "CidrBlock": "10.0.64.0/18",
         "MapPublicIpOnLaunch": true,
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "aws-cdk:subnet-name",
             "Value": "Public",
           },
-          Object {
+          {
             "Key": "aws-cdk:subnet-type",
             "Value": "Public",
           },
-          Object {
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PublicSubnet2",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::Subnet",
     },
-    "ClusterVpcVPCGW47AC17E9": Object {
-      "Properties": Object {
-        "InternetGatewayId": Object {
+    "ClusterVpcVPCGW47AC17E9": {
+      "Properties": {
+        "InternetGatewayId": {
           "Ref": "ClusterVpcIGW1E358A6E",
         },
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::VPCGatewayAttachment",
     },
   },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                  ],
+                  {
+                    "Ref": "BootstrapVersion",
+                  },
+                ],
+              },
+            ],
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.",
+        },
+      ],
+    },
+  },
 }
 `;
 
 exports[`Runtime Cluster Maintained certificate Matches Snapshot 1`] = `
-Object {
-  "Parameters": Object {
-    "AssetParameters7af6295e521fd55af94332393ceffb3e866aac4dc4956321f7918f21e72199e4ArtifactHash5E28809B": Object {
-      "Description": "Artifact hash for asset \\"7af6295e521fd55af94332393ceffb3e866aac4dc4956321f7918f21e72199e4\\"",
-      "Type": "String",
-    },
-    "AssetParameters7af6295e521fd55af94332393ceffb3e866aac4dc4956321f7918f21e72199e4S3Bucket5BEBDCBE": Object {
-      "Description": "S3 bucket for asset \\"7af6295e521fd55af94332393ceffb3e866aac4dc4956321f7918f21e72199e4\\"",
-      "Type": "String",
-    },
-    "AssetParameters7af6295e521fd55af94332393ceffb3e866aac4dc4956321f7918f21e72199e4S3VersionKey326451BC": Object {
-      "Description": "S3 key for asset version \\"7af6295e521fd55af94332393ceffb3e866aac4dc4956321f7918f21e72199e4\\"",
-      "Type": "String",
+{
+  "Parameters": {
+    "BootstrapVersion": {
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]",
+      "Type": "AWS::SSM::Parameter::Value<String>",
     },
   },
-  "Resources": Object {
-    "ClusterC2E21B66": Object {
+  "Resources": {
+    "ClusterC2E21B66": {
       "Type": "AWS::ECS::Cluster",
     },
-    "ClusterDefaultServiceDiscoveryNamespaceD29986FD": Object {
-      "Properties": Object {
+    "ClusterDefaultServiceDiscoveryNamespaceD29986FD": {
+      "Properties": {
         "Name": "private.domain",
-        "Vpc": Object {
+        "Vpc": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::ServiceDiscovery::PrivateDnsNamespace",
     },
-    "ClusterRouterCertificateCertificateRequestorFunction42960490": Object {
-      "DependsOn": Array [
+    "ClusterRouterCertificateCertificateRequestorFunction42960490": {
+      "DependsOn": [
         "ClusterRouterCertificateCertificateRequestorFunctionServiceRoleDefaultPolicyECC9E7B6",
         "ClusterRouterCertificateCertificateRequestorFunctionServiceRole249F8BF6",
       ],
-      "Properties": Object {
-        "Code": Object {
-          "S3Bucket": Object {
-            "Ref": "AssetParameters7af6295e521fd55af94332393ceffb3e866aac4dc4956321f7918f21e72199e4S3Bucket5BEBDCBE",
-          },
-          "S3Key": Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                Object {
-                  "Fn::Select": Array [
-                    0,
-                    Object {
-                      "Fn::Split": Array [
-                        "||",
-                        Object {
-                          "Ref": "AssetParameters7af6295e521fd55af94332393ceffb3e866aac4dc4956321f7918f21e72199e4S3VersionKey326451BC",
-                        },
-                      ],
-                    },
-                  ],
-                },
-                Object {
-                  "Fn::Select": Array [
-                    1,
-                    Object {
-                      "Fn::Split": Array [
-                        "||",
-                        Object {
-                          "Ref": "AssetParameters7af6295e521fd55af94332393ceffb3e866aac4dc4956321f7918f21e72199e4S3VersionKey326451BC",
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
-            ],
-          },
+      "Properties": {
+        "Code": {
+          "S3Bucket": "cdk-hnb659fds-assets-123213123-us-east-1",
+          "S3Key": "ef671dfd26b6dde1f73a4325587504813605a928622ebc466f4d0de6a0f3b672.zip",
         },
         "Handler": "index.certificateRequestHandler",
-        "Role": Object {
-          "Fn::GetAtt": Array [
+        "Role": {
+          "Fn::GetAtt": [
             "ClusterRouterCertificateCertificateRequestorFunctionServiceRole249F8BF6",
             "Arn",
           ],
@@ -1897,27 +1961,27 @@ Object {
       },
       "Type": "AWS::Lambda::Function",
     },
-    "ClusterRouterCertificateCertificateRequestorFunctionServiceRole249F8BF6": Object {
-      "Properties": Object {
-        "AssumeRolePolicyDocument": Object {
-          "Statement": Array [
-            Object {
+    "ClusterRouterCertificateCertificateRequestorFunctionServiceRole249F8BF6": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
               "Action": "sts:AssumeRole",
               "Effect": "Allow",
-              "Principal": Object {
+              "Principal": {
                 "Service": "lambda.amazonaws.com",
               },
             },
           ],
           "Version": "2012-10-17",
         },
-        "ManagedPolicyArns": Array [
-          Object {
-            "Fn::Join": Array [
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
               "",
-              Array [
+              [
                 "arn:",
-                Object {
+                {
                   "Ref": "AWS::Partition",
                 },
                 ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
@@ -1928,12 +1992,12 @@ Object {
       },
       "Type": "AWS::IAM::Role",
     },
-    "ClusterRouterCertificateCertificateRequestorFunctionServiceRoleDefaultPolicyECC9E7B6": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": Array [
+    "ClusterRouterCertificateCertificateRequestorFunctionServiceRoleDefaultPolicyECC9E7B6": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
                 "acm:RequestCertificate",
                 "acm:DescribeCertificate",
                 "acm:DeleteCertificate",
@@ -1942,20 +2006,35 @@ Object {
               "Effect": "Allow",
               "Resource": "*",
             },
-            Object {
+            {
               "Action": "route53:GetChange",
               "Effect": "Allow",
               "Resource": "*",
             },
-            Object {
+            {
               "Action": "route53:changeResourceRecordSets",
+              "Condition": {
+                "ForAllValues:StringEquals": {
+                  "route53:ChangeResourceRecordSetsActions": [
+                    "UPSERT",
+                  ],
+                  "route53:ChangeResourceRecordSetsRecordTypes": [
+                    "CNAME",
+                  ],
+                },
+                "ForAllValues:StringLike": {
+                  "route53:ChangeResourceRecordSetsNormalizedRecordNames": [
+                    "*.public.domain",
+                  ],
+                },
+              },
               "Effect": "Allow",
-              "Resource": Object {
-                "Fn::Join": Array [
+              "Resource": {
+                "Fn::Join": [
                   "",
-                  Array [
+                  [
                     "arn:",
-                    Object {
+                    {
                       "Ref": "AWS::Partition",
                     },
                     ":route53:::hostedzone/DUMMY",
@@ -1967,21 +2046,21 @@ Object {
           "Version": "2012-10-17",
         },
         "PolicyName": "ClusterRouterCertificateCertificateRequestorFunctionServiceRoleDefaultPolicyECC9E7B6",
-        "Roles": Array [
-          Object {
+        "Roles": [
+          {
             "Ref": "ClusterRouterCertificateCertificateRequestorFunctionServiceRole249F8BF6",
           },
         ],
       },
       "Type": "AWS::IAM::Policy",
     },
-    "ClusterRouterCertificateCertificateRequestorResource56EF141A": Object {
+    "ClusterRouterCertificateCertificateRequestorResource56EF141A": {
       "DeletionPolicy": "Delete",
-      "Properties": Object {
+      "Properties": {
         "DomainName": "*.public.domain",
         "HostedZoneId": "DUMMY",
-        "ServiceToken": Object {
-          "Fn::GetAtt": Array [
+        "ServiceToken": {
+          "Fn::GetAtt": [
             "ClusterRouterCertificateCertificateRequestorFunction42960490",
             "Arn",
           ],
@@ -1990,36 +2069,39 @@ Object {
       "Type": "AWS::CloudFormation::CustomResource",
       "UpdateReplacePolicy": "Delete",
     },
-    "ClusterRouterLoadBalancer1D918095": Object {
-      "DependsOn": Array [
+    "ClusterRouterLoadBalancer1D918095": {
+      "DependsOn": [
         "ClusterVpcPublicSubnet1DefaultRoute62DA4B4B",
+        "ClusterVpcPublicSubnet1RouteTableAssociation0FBEF1F4",
         "ClusterVpcPublicSubnet2DefaultRoute97446C8A",
+        "ClusterVpcPublicSubnet2RouteTableAssociation8446B27D",
         "ClusterVpcPublicSubnet3DefaultRoute772CA282",
+        "ClusterVpcPublicSubnet3RouteTableAssociationD919DEF1",
       ],
-      "Properties": Object {
-        "LoadBalancerAttributes": Array [
-          Object {
+      "Properties": {
+        "LoadBalancerAttributes": [
+          {
             "Key": "deletion_protection.enabled",
             "Value": "false",
           },
         ],
         "Scheme": "internet-facing",
-        "SecurityGroups": Array [
-          Object {
-            "Fn::GetAtt": Array [
+        "SecurityGroups": [
+          {
+            "Fn::GetAtt": [
               "ClusterRouterLoadBalancerSecurityGroupE1E5F3D9",
               "GroupId",
             ],
           },
         ],
-        "Subnets": Array [
-          Object {
+        "Subnets": [
+          {
             "Ref": "ClusterVpcPublicSubnet1SubnetA9F7E0A5",
           },
-          Object {
+          {
             "Ref": "ClusterVpcPublicSubnet2Subnet059113C4",
           },
-          Object {
+          {
             "Ref": "ClusterVpcPublicSubnet3Subnet3AB4E59C",
           },
         ],
@@ -2027,11 +2109,11 @@ Object {
       },
       "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
     },
-    "ClusterRouterLoadBalancerHttpListener5011B408": Object {
-      "Properties": Object {
-        "DefaultActions": Array [
-          Object {
-            "RedirectConfig": Object {
+    "ClusterRouterLoadBalancerHttpListener5011B408": {
+      "Properties": {
+        "DefaultActions": [
+          {
+            "RedirectConfig": {
               "Port": "443",
               "Protocol": "HTTPS",
               "StatusCode": "HTTP_301",
@@ -2039,7 +2121,7 @@ Object {
             "Type": "redirect",
           },
         ],
-        "LoadBalancerArn": Object {
+        "LoadBalancerArn": {
           "Ref": "ClusterRouterLoadBalancer1D918095",
         },
         "Port": 80,
@@ -2047,27 +2129,27 @@ Object {
       },
       "Type": "AWS::ElasticLoadBalancingV2::Listener",
     },
-    "ClusterRouterLoadBalancerHttpsListenerE3082BDD": Object {
-      "Properties": Object {
-        "Certificates": Array [
-          Object {
-            "CertificateArn": Object {
-              "Fn::GetAtt": Array [
+    "ClusterRouterLoadBalancerHttpsListenerE3082BDD": {
+      "Properties": {
+        "Certificates": [
+          {
+            "CertificateArn": {
+              "Fn::GetAtt": [
                 "ClusterRouterCertificateCertificateRequestorResource56EF141A",
                 "Arn",
               ],
             },
           },
         ],
-        "DefaultActions": Array [
-          Object {
-            "TargetGroupArn": Object {
+        "DefaultActions": [
+          {
+            "TargetGroupArn": {
               "Ref": "ClusterRouterLoadBalancerHttpsListenerEcsServiceGroup48F29AC9",
             },
             "Type": "forward",
           },
         ],
-        "LoadBalancerArn": Object {
+        "LoadBalancerArn": {
           "Ref": "ClusterRouterLoadBalancer1D918095",
         },
         "Port": 443,
@@ -2075,30 +2157,36 @@ Object {
       },
       "Type": "AWS::ElasticLoadBalancingV2::Listener",
     },
-    "ClusterRouterLoadBalancerHttpsListenerEcsServiceGroup48F29AC9": Object {
-      "Properties": Object {
+    "ClusterRouterLoadBalancerHttpsListenerEcsServiceGroup48F29AC9": {
+      "Properties": {
         "HealthCheckPath": "/ping",
         "Port": 80,
         "Protocol": "HTTP",
+        "TargetGroupAttributes": [
+          {
+            "Key": "stickiness.enabled",
+            "Value": "false",
+          },
+        ],
         "TargetType": "ip",
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
     },
-    "ClusterRouterLoadBalancerSecurityGroupE1E5F3D9": Object {
-      "Properties": Object {
+    "ClusterRouterLoadBalancerSecurityGroupE1E5F3D9": {
+      "Properties": {
         "GroupDescription": "Automatically created Security Group for ELB StackClusterRouterLoadBalancer49BEBF7D",
-        "SecurityGroupIngress": Array [
-          Object {
+        "SecurityGroupIngress": [
+          {
             "CidrIp": "0.0.0.0/0",
             "Description": "Allow from anyone on port 443",
             "FromPort": 443,
             "IpProtocol": "tcp",
             "ToPort": 443,
           },
-          Object {
+          {
             "CidrIp": "0.0.0.0/0",
             "Description": "Allow from anyone on port 80",
             "FromPort": 80,
@@ -2106,24 +2194,24 @@ Object {
             "ToPort": 80,
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::SecurityGroup",
     },
-    "ClusterRouterLoadBalancerSecurityGrouptoStackClusterRouterServiceSecurityGroupDD1CDD3B805BD321E7": Object {
-      "Properties": Object {
+    "ClusterRouterLoadBalancerSecurityGrouptoStackClusterRouterServiceSecurityGroupDD1CDD3B805BD321E7": {
+      "Properties": {
         "Description": "Load balancer to target",
-        "DestinationSecurityGroupId": Object {
-          "Fn::GetAtt": Array [
+        "DestinationSecurityGroupId": {
+          "Fn::GetAtt": [
             "ClusterRouterServiceSecurityGroupCBEC2A56",
             "GroupId",
           ],
         },
         "FromPort": 80,
-        "GroupId": Object {
-          "Fn::GetAtt": Array [
+        "GroupId": {
+          "Fn::GetAtt": [
             "ClusterRouterLoadBalancerSecurityGroupE1E5F3D9",
             "GroupId",
           ],
@@ -2133,18 +2221,18 @@ Object {
       },
       "Type": "AWS::EC2::SecurityGroupEgress",
     },
-    "ClusterRouterNamespaceRecord89A640AB": Object {
-      "Properties": Object {
+    "ClusterRouterNamespaceRecord89A640AB": {
+      "Properties": {
         "Description": "Traefik router",
-        "DnsConfig": Object {
-          "DnsRecords": Array [
-            Object {
+        "DnsConfig": {
+          "DnsRecords": [
+            {
               "TTL": 60,
               "Type": "A",
             },
           ],
-          "NamespaceId": Object {
-            "Fn::GetAtt": Array [
+          "NamespaceId": {
+            "Fn::GetAtt": [
               "ClusterDefaultServiceDiscoveryNamespaceD29986FD",
               "Id",
             ],
@@ -2152,8 +2240,8 @@ Object {
           "RoutingPolicy": "MULTIVALUE",
         },
         "Name": "_router",
-        "NamespaceId": Object {
-          "Fn::GetAtt": Array [
+        "NamespaceId": {
+          "Fn::GetAtt": [
             "ClusterDefaultServiceDiscoveryNamespaceD29986FD",
             "Id",
           ],
@@ -2161,16 +2249,16 @@ Object {
       },
       "Type": "AWS::ServiceDiscovery::Service",
     },
-    "ClusterRouterRouterRecordpublicdomain2B490638": Object {
-      "Properties": Object {
-        "AliasTarget": Object {
-          "DNSName": Object {
-            "Fn::Join": Array [
+    "ClusterRouterRouterRecordpublicdomain2B490638": {
+      "Properties": {
+        "AliasTarget": {
+          "DNSName": {
+            "Fn::Join": [
               "",
-              Array [
+              [
                 "dualstack.",
-                Object {
-                  "Fn::GetAtt": Array [
+                {
+                  "Fn::GetAtt": [
                     "ClusterRouterLoadBalancer1D918095",
                     "DNSName",
                   ],
@@ -2178,8 +2266,8 @@ Object {
               ],
             ],
           },
-          "HostedZoneId": Object {
-            "Fn::GetAtt": Array [
+          "HostedZoneId": {
+            "Fn::GetAtt": [
               "ClusterRouterLoadBalancer1D918095",
               "CanonicalHostedZoneID",
             ],
@@ -2191,14 +2279,14 @@ Object {
       },
       "Type": "AWS::Route53::RecordSet",
     },
-    "ClusterRouterRouterTaskRoleE8B7AD7C": Object {
-      "Properties": Object {
-        "AssumeRolePolicyDocument": Object {
-          "Statement": Array [
-            Object {
+    "ClusterRouterRouterTaskRoleE8B7AD7C": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
               "Action": "sts:AssumeRole",
               "Effect": "Allow",
-              "Principal": Object {
+              "Principal": {
                 "Service": "ecs-tasks.amazonaws.com",
               },
             },
@@ -2206,12 +2294,12 @@ Object {
           "Version": "2012-10-17",
         },
         "Description": "Role that router service container assumes so that it communicate with ECS and EC2 APIs to auto-detect services (containers) to route traffic to",
-        "Policies": Array [
-          Object {
-            "PolicyDocument": Object {
-              "Statement": Array [
-                Object {
-                  "Action": Array [
+        "Policies": [
+          {
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Action": [
                     "ec2:DescribeInstances",
                     "ecs:ListClusters",
                     "ecs:DescribeClusters",
@@ -2232,16 +2320,16 @@ Object {
       },
       "Type": "AWS::IAM::Role",
     },
-    "ClusterRouterServiceA6DA0C86": Object {
-      "DependsOn": Array [
+    "ClusterRouterServiceA6DA0C86": {
+      "DependsOn": [
         "ClusterRouterLoadBalancerHttpsListenerEcsServiceGroup48F29AC9",
         "ClusterRouterLoadBalancerHttpsListenerE3082BDD",
       ],
-      "Properties": Object {
-        "Cluster": Object {
+      "Properties": {
+        "Cluster": {
           "Ref": "ClusterC2E21B66",
         },
-        "DeploymentConfiguration": Object {
+        "DeploymentConfiguration": {
           "MaximumPercent": 200,
           "MinimumHealthyPercent": 50,
         },
@@ -2249,84 +2337,84 @@ Object {
         "EnableECSManagedTags": false,
         "HealthCheckGracePeriodSeconds": 60,
         "LaunchType": "FARGATE",
-        "LoadBalancers": Array [
-          Object {
+        "LoadBalancers": [
+          {
             "ContainerName": "Container",
             "ContainerPort": 80,
-            "TargetGroupArn": Object {
+            "TargetGroupArn": {
               "Ref": "ClusterRouterLoadBalancerHttpsListenerEcsServiceGroup48F29AC9",
             },
           },
         ],
-        "NetworkConfiguration": Object {
-          "AwsvpcConfiguration": Object {
+        "NetworkConfiguration": {
+          "AwsvpcConfiguration": {
             "AssignPublicIp": "DISABLED",
-            "SecurityGroups": Array [
-              Object {
-                "Fn::GetAtt": Array [
+            "SecurityGroups": [
+              {
+                "Fn::GetAtt": [
                   "ClusterRouterServiceSecurityGroupCBEC2A56",
                   "GroupId",
                 ],
               },
             ],
-            "Subnets": Array [
-              Object {
+            "Subnets": [
+              {
                 "Ref": "ClusterVpcPrivateSubnet1SubnetA4EB481A",
               },
-              Object {
+              {
                 "Ref": "ClusterVpcPrivateSubnet2SubnetBD1ECB6E",
               },
-              Object {
+              {
                 "Ref": "ClusterVpcPrivateSubnet3Subnet2479B8E0",
               },
             ],
           },
         },
-        "ServiceRegistries": Array [
-          Object {
-            "RegistryArn": Object {
-              "Fn::GetAtt": Array [
+        "ServiceRegistries": [
+          {
+            "RegistryArn": {
+              "Fn::GetAtt": [
                 "ClusterRouterNamespaceRecord89A640AB",
                 "Arn",
               ],
             },
           },
         ],
-        "TaskDefinition": Object {
+        "TaskDefinition": {
           "Ref": "ClusterRouterTaskDefinition89C7182E",
         },
       },
       "Type": "AWS::ECS::Service",
     },
-    "ClusterRouterServiceSecurityGroupCBEC2A56": Object {
-      "Properties": Object {
+    "ClusterRouterServiceSecurityGroupCBEC2A56": {
+      "Properties": {
         "GroupDescription": "Stack/Cluster/Router/Service/SecurityGroup",
-        "SecurityGroupEgress": Array [
-          Object {
+        "SecurityGroupEgress": [
+          {
             "CidrIp": "0.0.0.0/0",
             "Description": "Allow all outbound traffic by default",
             "IpProtocol": "-1",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::SecurityGroup",
     },
-    "ClusterRouterServiceSecurityGroupfromStackClusterRouterLoadBalancerSecurityGroup5D5E07D38051C9CF5F": Object {
-      "Properties": Object {
+    "ClusterRouterServiceSecurityGroupfromStackClusterRouterLoadBalancerSecurityGroup5D5E07D38051C9CF5F": {
+      "Properties": {
         "Description": "Load balancer to target",
         "FromPort": 80,
-        "GroupId": Object {
-          "Fn::GetAtt": Array [
+        "GroupId": {
+          "Fn::GetAtt": [
             "ClusterRouterServiceSecurityGroupCBEC2A56",
             "GroupId",
           ],
         },
         "IpProtocol": "tcp",
-        "SourceSecurityGroupId": Object {
-          "Fn::GetAtt": Array [
+        "SourceSecurityGroupId": {
+          "Fn::GetAtt": [
             "ClusterRouterLoadBalancerSecurityGroupE1E5F3D9",
             "GroupId",
           ],
@@ -2335,62 +2423,62 @@ Object {
       },
       "Type": "AWS::EC2::SecurityGroupIngress",
     },
-    "ClusterRouterTaskDefinition89C7182E": Object {
-      "Properties": Object {
-        "ContainerDefinitions": Array [
-          Object {
-            "Environment": Array [
-              Object {
+    "ClusterRouterTaskDefinition89C7182E": {
+      "Properties": {
+        "ContainerDefinitions": [
+          {
+            "Environment": [
+              {
                 "Name": "TRAEFIK_ENTRYPOINTS_HTTP",
                 "Value": "true",
               },
-              Object {
+              {
                 "Name": "TRAEFIK_ENTRYPOINTS_HTTP_ADDRESS",
                 "Value": ":80",
               },
-              Object {
+              {
                 "Name": "TRAEFIK_LOG",
                 "Value": "true",
               },
-              Object {
+              {
                 "Name": "TRAEFIK_LOG_LEVEL",
                 "Value": "ERROR",
               },
-              Object {
+              {
                 "Name": "TRAEFIK_PING",
                 "Value": "true",
               },
-              Object {
+              {
                 "Name": "TRAEFIK_PING_ENTRYPOINT",
                 "Value": "http",
               },
-              Object {
+              {
                 "Name": "TRAEFIK_PROVIDERS_ECS",
                 "Value": "true",
               },
-              Object {
+              {
                 "Name": "TRAEFIK_PROVIDERS_ECS_REFRESHSECONDS",
                 "Value": "10",
               },
-              Object {
+              {
                 "Name": "TRAEFIK_PROVIDERS_ECS_CLUSTERS",
-                "Value": Object {
+                "Value": {
                   "Ref": "ClusterC2E21B66",
                 },
               },
-              Object {
+              {
                 "Name": "TRAEFIK_PROVIDERS_ECS_REGION",
-                "Value": Object {
+                "Value": {
                   "Ref": "AWS::Region",
                 },
               },
             ],
             "Essential": true,
             "Image": "traefik:2.4",
-            "LogConfiguration": Object {
+            "LogConfiguration": {
               "LogDriver": "awslogs",
-              "Options": Object {
-                "awslogs-group": Object {
+              "Options": {
+                "awslogs-group": {
                   "Ref": "ClusterRouterTaskDefinitionContainerLogGroupD0031984",
                 },
                 "awslogs-region": "us-east-1",
@@ -2398,8 +2486,8 @@ Object {
               },
             },
             "Name": "Container",
-            "PortMappings": Array [
-              Object {
+            "PortMappings": [
+              {
                 "ContainerPort": 80,
                 "HostPort": 80,
                 "Protocol": "tcp",
@@ -2408,8 +2496,8 @@ Object {
           },
         ],
         "Cpu": "256",
-        "ExecutionRoleArn": Object {
-          "Fn::GetAtt": Array [
+        "ExecutionRoleArn": {
+          "Fn::GetAtt": [
             "ClusterRouterTaskDefinitionExecutionRole68739FF3",
             "Arn",
           ],
@@ -2417,11 +2505,11 @@ Object {
         "Family": "StackClusterRouterTaskDefinition757F7833",
         "Memory": "512",
         "NetworkMode": "awsvpc",
-        "RequiresCompatibilities": Array [
+        "RequiresCompatibilities": [
           "FARGATE",
         ],
-        "TaskRoleArn": Object {
-          "Fn::GetAtt": Array [
+        "TaskRoleArn": {
+          "Fn::GetAtt": [
             "ClusterRouterRouterTaskRoleE8B7AD7C",
             "Arn",
           ],
@@ -2429,22 +2517,22 @@ Object {
       },
       "Type": "AWS::ECS::TaskDefinition",
     },
-    "ClusterRouterTaskDefinitionContainerLogGroupD0031984": Object {
+    "ClusterRouterTaskDefinitionContainerLogGroupD0031984": {
       "DeletionPolicy": "Retain",
-      "Properties": Object {
+      "Properties": {
         "RetentionInDays": 7,
       },
       "Type": "AWS::Logs::LogGroup",
       "UpdateReplacePolicy": "Retain",
     },
-    "ClusterRouterTaskDefinitionExecutionRole68739FF3": Object {
-      "Properties": Object {
-        "AssumeRolePolicyDocument": Object {
-          "Statement": Array [
-            Object {
+    "ClusterRouterTaskDefinitionExecutionRole68739FF3": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
               "Action": "sts:AssumeRole",
               "Effect": "Allow",
-              "Principal": Object {
+              "Principal": {
                 "Service": "ecs-tasks.amazonaws.com",
               },
             },
@@ -2454,18 +2542,18 @@ Object {
       },
       "Type": "AWS::IAM::Role",
     },
-    "ClusterRouterTaskDefinitionExecutionRoleDefaultPolicyBF8479E0": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": Array [
+    "ClusterRouterTaskDefinitionExecutionRoleDefaultPolicyBF8479E0": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
                 "logs:CreateLogStream",
                 "logs:PutLogEvents",
               ],
               "Effect": "Allow",
-              "Resource": Object {
-                "Fn::GetAtt": Array [
+              "Resource": {
+                "Fn::GetAtt": [
                   "ClusterRouterTaskDefinitionContainerLogGroupD0031984",
                   "Arn",
                 ],
@@ -2475,22 +2563,22 @@ Object {
           "Version": "2012-10-17",
         },
         "PolicyName": "ClusterRouterTaskDefinitionExecutionRoleDefaultPolicyBF8479E0",
-        "Roles": Array [
-          Object {
+        "Roles": [
+          {
             "Ref": "ClusterRouterTaskDefinitionExecutionRole68739FF3",
           },
         ],
       },
       "Type": "AWS::IAM::Policy",
     },
-    "ClusterVpcFAA3CEDF": Object {
-      "Properties": Object {
+    "ClusterVpcFAA3CEDF": {
+      "Properties": {
         "CidrBlock": "10.0.0.0/16",
         "EnableDnsHostnames": true,
         "EnableDnsSupport": true,
         "InstanceTenancy": "default",
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc",
           },
@@ -2498,10 +2586,10 @@ Object {
       },
       "Type": "AWS::EC2::VPC",
     },
-    "ClusterVpcIGW1E358A6E": Object {
-      "Properties": Object {
-        "Tags": Array [
-          Object {
+    "ClusterVpcIGW1E358A6E": {
+      "Properties": {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc",
           },
@@ -2509,212 +2597,212 @@ Object {
       },
       "Type": "AWS::EC2::InternetGateway",
     },
-    "ClusterVpcPrivateSubnet1DefaultRoute3B4D40DD": Object {
-      "Properties": Object {
+    "ClusterVpcPrivateSubnet1DefaultRoute3B4D40DD": {
+      "Properties": {
         "DestinationCidrBlock": "0.0.0.0/0",
-        "NatGatewayId": Object {
+        "NatGatewayId": {
           "Ref": "ClusterVpcPublicSubnet1NATGateway0693C346",
         },
-        "RouteTableId": Object {
+        "RouteTableId": {
           "Ref": "ClusterVpcPrivateSubnet1RouteTable5AAEDA3F",
         },
       },
       "Type": "AWS::EC2::Route",
     },
-    "ClusterVpcPrivateSubnet1RouteTable5AAEDA3F": Object {
-      "Properties": Object {
-        "Tags": Array [
-          Object {
+    "ClusterVpcPrivateSubnet1RouteTable5AAEDA3F": {
+      "Properties": {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PrivateSubnet1",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::RouteTable",
     },
-    "ClusterVpcPrivateSubnet1RouteTableAssociation9B8A88D9": Object {
-      "Properties": Object {
-        "RouteTableId": Object {
+    "ClusterVpcPrivateSubnet1RouteTableAssociation9B8A88D9": {
+      "Properties": {
+        "RouteTableId": {
           "Ref": "ClusterVpcPrivateSubnet1RouteTable5AAEDA3F",
         },
-        "SubnetId": Object {
+        "SubnetId": {
           "Ref": "ClusterVpcPrivateSubnet1SubnetA4EB481A",
         },
       },
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
     },
-    "ClusterVpcPrivateSubnet1SubnetA4EB481A": Object {
-      "Properties": Object {
+    "ClusterVpcPrivateSubnet1SubnetA4EB481A": {
+      "Properties": {
         "AvailabilityZone": "dummy1a",
         "CidrBlock": "10.0.96.0/19",
         "MapPublicIpOnLaunch": false,
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "aws-cdk:subnet-name",
             "Value": "Private",
           },
-          Object {
+          {
             "Key": "aws-cdk:subnet-type",
             "Value": "Private",
           },
-          Object {
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PrivateSubnet1",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::Subnet",
     },
-    "ClusterVpcPrivateSubnet2DefaultRoute011666AF": Object {
-      "Properties": Object {
+    "ClusterVpcPrivateSubnet2DefaultRoute011666AF": {
+      "Properties": {
         "DestinationCidrBlock": "0.0.0.0/0",
-        "NatGatewayId": Object {
+        "NatGatewayId": {
           "Ref": "ClusterVpcPublicSubnet2NATGateway00B24686",
         },
-        "RouteTableId": Object {
+        "RouteTableId": {
           "Ref": "ClusterVpcPrivateSubnet2RouteTable73064A66",
         },
       },
       "Type": "AWS::EC2::Route",
     },
-    "ClusterVpcPrivateSubnet2RouteTable73064A66": Object {
-      "Properties": Object {
-        "Tags": Array [
-          Object {
+    "ClusterVpcPrivateSubnet2RouteTable73064A66": {
+      "Properties": {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PrivateSubnet2",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::RouteTable",
     },
-    "ClusterVpcPrivateSubnet2RouteTableAssociationFB21349E": Object {
-      "Properties": Object {
-        "RouteTableId": Object {
+    "ClusterVpcPrivateSubnet2RouteTableAssociationFB21349E": {
+      "Properties": {
+        "RouteTableId": {
           "Ref": "ClusterVpcPrivateSubnet2RouteTable73064A66",
         },
-        "SubnetId": Object {
+        "SubnetId": {
           "Ref": "ClusterVpcPrivateSubnet2SubnetBD1ECB6E",
         },
       },
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
     },
-    "ClusterVpcPrivateSubnet2SubnetBD1ECB6E": Object {
-      "Properties": Object {
+    "ClusterVpcPrivateSubnet2SubnetBD1ECB6E": {
+      "Properties": {
         "AvailabilityZone": "dummy1b",
         "CidrBlock": "10.0.128.0/19",
         "MapPublicIpOnLaunch": false,
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "aws-cdk:subnet-name",
             "Value": "Private",
           },
-          Object {
+          {
             "Key": "aws-cdk:subnet-type",
             "Value": "Private",
           },
-          Object {
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PrivateSubnet2",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::Subnet",
     },
-    "ClusterVpcPrivateSubnet3DefaultRoute90E9BC37": Object {
-      "Properties": Object {
+    "ClusterVpcPrivateSubnet3DefaultRoute90E9BC37": {
+      "Properties": {
         "DestinationCidrBlock": "0.0.0.0/0",
-        "NatGatewayId": Object {
+        "NatGatewayId": {
           "Ref": "ClusterVpcPublicSubnet3NATGateway1CA7B94F",
         },
-        "RouteTableId": Object {
+        "RouteTableId": {
           "Ref": "ClusterVpcPrivateSubnet3RouteTable941ABA3E",
         },
       },
       "Type": "AWS::EC2::Route",
     },
-    "ClusterVpcPrivateSubnet3RouteTable941ABA3E": Object {
-      "Properties": Object {
-        "Tags": Array [
-          Object {
+    "ClusterVpcPrivateSubnet3RouteTable941ABA3E": {
+      "Properties": {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PrivateSubnet3",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::RouteTable",
     },
-    "ClusterVpcPrivateSubnet3RouteTableAssociationB0D482EA": Object {
-      "Properties": Object {
-        "RouteTableId": Object {
+    "ClusterVpcPrivateSubnet3RouteTableAssociationB0D482EA": {
+      "Properties": {
+        "RouteTableId": {
           "Ref": "ClusterVpcPrivateSubnet3RouteTable941ABA3E",
         },
-        "SubnetId": Object {
+        "SubnetId": {
           "Ref": "ClusterVpcPrivateSubnet3Subnet2479B8E0",
         },
       },
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
     },
-    "ClusterVpcPrivateSubnet3Subnet2479B8E0": Object {
-      "Properties": Object {
+    "ClusterVpcPrivateSubnet3Subnet2479B8E0": {
+      "Properties": {
         "AvailabilityZone": "dummy1c",
         "CidrBlock": "10.0.160.0/19",
         "MapPublicIpOnLaunch": false,
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "aws-cdk:subnet-name",
             "Value": "Private",
           },
-          Object {
+          {
             "Key": "aws-cdk:subnet-type",
             "Value": "Private",
           },
-          Object {
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PrivateSubnet3",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::Subnet",
     },
-    "ClusterVpcPublicSubnet1DefaultRoute62DA4B4B": Object {
-      "DependsOn": Array [
+    "ClusterVpcPublicSubnet1DefaultRoute62DA4B4B": {
+      "DependsOn": [
         "ClusterVpcVPCGW47AC17E9",
       ],
-      "Properties": Object {
+      "Properties": {
         "DestinationCidrBlock": "0.0.0.0/0",
-        "GatewayId": Object {
+        "GatewayId": {
           "Ref": "ClusterVpcIGW1E358A6E",
         },
-        "RouteTableId": Object {
+        "RouteTableId": {
           "Ref": "ClusterVpcPublicSubnet1RouteTable5594A636",
         },
       },
       "Type": "AWS::EC2::Route",
     },
-    "ClusterVpcPublicSubnet1EIP433C56EE": Object {
-      "Properties": Object {
+    "ClusterVpcPublicSubnet1EIP433C56EE": {
+      "Properties": {
         "Domain": "vpc",
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PublicSubnet1",
           },
@@ -2722,19 +2810,23 @@ Object {
       },
       "Type": "AWS::EC2::EIP",
     },
-    "ClusterVpcPublicSubnet1NATGateway0693C346": Object {
-      "Properties": Object {
-        "AllocationId": Object {
-          "Fn::GetAtt": Array [
+    "ClusterVpcPublicSubnet1NATGateway0693C346": {
+      "DependsOn": [
+        "ClusterVpcPublicSubnet1DefaultRoute62DA4B4B",
+        "ClusterVpcPublicSubnet1RouteTableAssociation0FBEF1F4",
+      ],
+      "Properties": {
+        "AllocationId": {
+          "Fn::GetAtt": [
             "ClusterVpcPublicSubnet1EIP433C56EE",
             "AllocationId",
           ],
         },
-        "SubnetId": Object {
+        "SubnetId": {
           "Ref": "ClusterVpcPublicSubnet1SubnetA9F7E0A5",
         },
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PublicSubnet1",
           },
@@ -2742,76 +2834,76 @@ Object {
       },
       "Type": "AWS::EC2::NatGateway",
     },
-    "ClusterVpcPublicSubnet1RouteTable5594A636": Object {
-      "Properties": Object {
-        "Tags": Array [
-          Object {
+    "ClusterVpcPublicSubnet1RouteTable5594A636": {
+      "Properties": {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PublicSubnet1",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::RouteTable",
     },
-    "ClusterVpcPublicSubnet1RouteTableAssociation0FBEF1F4": Object {
-      "Properties": Object {
-        "RouteTableId": Object {
+    "ClusterVpcPublicSubnet1RouteTableAssociation0FBEF1F4": {
+      "Properties": {
+        "RouteTableId": {
           "Ref": "ClusterVpcPublicSubnet1RouteTable5594A636",
         },
-        "SubnetId": Object {
+        "SubnetId": {
           "Ref": "ClusterVpcPublicSubnet1SubnetA9F7E0A5",
         },
       },
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
     },
-    "ClusterVpcPublicSubnet1SubnetA9F7E0A5": Object {
-      "Properties": Object {
+    "ClusterVpcPublicSubnet1SubnetA9F7E0A5": {
+      "Properties": {
         "AvailabilityZone": "dummy1a",
         "CidrBlock": "10.0.0.0/19",
         "MapPublicIpOnLaunch": true,
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "aws-cdk:subnet-name",
             "Value": "Public",
           },
-          Object {
+          {
             "Key": "aws-cdk:subnet-type",
             "Value": "Public",
           },
-          Object {
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PublicSubnet1",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::Subnet",
     },
-    "ClusterVpcPublicSubnet2DefaultRoute97446C8A": Object {
-      "DependsOn": Array [
+    "ClusterVpcPublicSubnet2DefaultRoute97446C8A": {
+      "DependsOn": [
         "ClusterVpcVPCGW47AC17E9",
       ],
-      "Properties": Object {
+      "Properties": {
         "DestinationCidrBlock": "0.0.0.0/0",
-        "GatewayId": Object {
+        "GatewayId": {
           "Ref": "ClusterVpcIGW1E358A6E",
         },
-        "RouteTableId": Object {
+        "RouteTableId": {
           "Ref": "ClusterVpcPublicSubnet2RouteTable7B43F18C",
         },
       },
       "Type": "AWS::EC2::Route",
     },
-    "ClusterVpcPublicSubnet2EIP203DF3E5": Object {
-      "Properties": Object {
+    "ClusterVpcPublicSubnet2EIP203DF3E5": {
+      "Properties": {
         "Domain": "vpc",
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PublicSubnet2",
           },
@@ -2819,19 +2911,23 @@ Object {
       },
       "Type": "AWS::EC2::EIP",
     },
-    "ClusterVpcPublicSubnet2NATGateway00B24686": Object {
-      "Properties": Object {
-        "AllocationId": Object {
-          "Fn::GetAtt": Array [
+    "ClusterVpcPublicSubnet2NATGateway00B24686": {
+      "DependsOn": [
+        "ClusterVpcPublicSubnet2DefaultRoute97446C8A",
+        "ClusterVpcPublicSubnet2RouteTableAssociation8446B27D",
+      ],
+      "Properties": {
+        "AllocationId": {
+          "Fn::GetAtt": [
             "ClusterVpcPublicSubnet2EIP203DF3E5",
             "AllocationId",
           ],
         },
-        "SubnetId": Object {
+        "SubnetId": {
           "Ref": "ClusterVpcPublicSubnet2Subnet059113C4",
         },
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PublicSubnet2",
           },
@@ -2839,76 +2935,76 @@ Object {
       },
       "Type": "AWS::EC2::NatGateway",
     },
-    "ClusterVpcPublicSubnet2RouteTable7B43F18C": Object {
-      "Properties": Object {
-        "Tags": Array [
-          Object {
+    "ClusterVpcPublicSubnet2RouteTable7B43F18C": {
+      "Properties": {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PublicSubnet2",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::RouteTable",
     },
-    "ClusterVpcPublicSubnet2RouteTableAssociation8446B27D": Object {
-      "Properties": Object {
-        "RouteTableId": Object {
+    "ClusterVpcPublicSubnet2RouteTableAssociation8446B27D": {
+      "Properties": {
+        "RouteTableId": {
           "Ref": "ClusterVpcPublicSubnet2RouteTable7B43F18C",
         },
-        "SubnetId": Object {
+        "SubnetId": {
           "Ref": "ClusterVpcPublicSubnet2Subnet059113C4",
         },
       },
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
     },
-    "ClusterVpcPublicSubnet2Subnet059113C4": Object {
-      "Properties": Object {
+    "ClusterVpcPublicSubnet2Subnet059113C4": {
+      "Properties": {
         "AvailabilityZone": "dummy1b",
         "CidrBlock": "10.0.32.0/19",
         "MapPublicIpOnLaunch": true,
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "aws-cdk:subnet-name",
             "Value": "Public",
           },
-          Object {
+          {
             "Key": "aws-cdk:subnet-type",
             "Value": "Public",
           },
-          Object {
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PublicSubnet2",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::Subnet",
     },
-    "ClusterVpcPublicSubnet3DefaultRoute772CA282": Object {
-      "DependsOn": Array [
+    "ClusterVpcPublicSubnet3DefaultRoute772CA282": {
+      "DependsOn": [
         "ClusterVpcVPCGW47AC17E9",
       ],
-      "Properties": Object {
+      "Properties": {
         "DestinationCidrBlock": "0.0.0.0/0",
-        "GatewayId": Object {
+        "GatewayId": {
           "Ref": "ClusterVpcIGW1E358A6E",
         },
-        "RouteTableId": Object {
+        "RouteTableId": {
           "Ref": "ClusterVpcPublicSubnet3RouteTable6810F4F3",
         },
       },
       "Type": "AWS::EC2::Route",
     },
-    "ClusterVpcPublicSubnet3EIP2AEE6537": Object {
-      "Properties": Object {
+    "ClusterVpcPublicSubnet3EIP2AEE6537": {
+      "Properties": {
         "Domain": "vpc",
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PublicSubnet3",
           },
@@ -2916,19 +3012,23 @@ Object {
       },
       "Type": "AWS::EC2::EIP",
     },
-    "ClusterVpcPublicSubnet3NATGateway1CA7B94F": Object {
-      "Properties": Object {
-        "AllocationId": Object {
-          "Fn::GetAtt": Array [
+    "ClusterVpcPublicSubnet3NATGateway1CA7B94F": {
+      "DependsOn": [
+        "ClusterVpcPublicSubnet3DefaultRoute772CA282",
+        "ClusterVpcPublicSubnet3RouteTableAssociationD919DEF1",
+      ],
+      "Properties": {
+        "AllocationId": {
+          "Fn::GetAtt": [
             "ClusterVpcPublicSubnet3EIP2AEE6537",
             "AllocationId",
           ],
         },
-        "SubnetId": Object {
+        "SubnetId": {
           "Ref": "ClusterVpcPublicSubnet3Subnet3AB4E59C",
         },
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PublicSubnet3",
           },
@@ -2936,116 +3036,153 @@ Object {
       },
       "Type": "AWS::EC2::NatGateway",
     },
-    "ClusterVpcPublicSubnet3RouteTable6810F4F3": Object {
-      "Properties": Object {
-        "Tags": Array [
-          Object {
+    "ClusterVpcPublicSubnet3RouteTable6810F4F3": {
+      "Properties": {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PublicSubnet3",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::RouteTable",
     },
-    "ClusterVpcPublicSubnet3RouteTableAssociationD919DEF1": Object {
-      "Properties": Object {
-        "RouteTableId": Object {
+    "ClusterVpcPublicSubnet3RouteTableAssociationD919DEF1": {
+      "Properties": {
+        "RouteTableId": {
           "Ref": "ClusterVpcPublicSubnet3RouteTable6810F4F3",
         },
-        "SubnetId": Object {
+        "SubnetId": {
           "Ref": "ClusterVpcPublicSubnet3Subnet3AB4E59C",
         },
       },
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
     },
-    "ClusterVpcPublicSubnet3Subnet3AB4E59C": Object {
-      "Properties": Object {
+    "ClusterVpcPublicSubnet3Subnet3AB4E59C": {
+      "Properties": {
         "AvailabilityZone": "dummy1c",
         "CidrBlock": "10.0.64.0/19",
         "MapPublicIpOnLaunch": true,
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "aws-cdk:subnet-name",
             "Value": "Public",
           },
-          Object {
+          {
             "Key": "aws-cdk:subnet-type",
             "Value": "Public",
           },
-          Object {
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PublicSubnet3",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::Subnet",
     },
-    "ClusterVpcVPCGW47AC17E9": Object {
-      "Properties": Object {
-        "InternetGatewayId": Object {
+    "ClusterVpcVPCGW47AC17E9": {
+      "Properties": {
+        "InternetGatewayId": {
           "Ref": "ClusterVpcIGW1E358A6E",
         },
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::VPCGatewayAttachment",
     },
   },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                  ],
+                  {
+                    "Ref": "BootstrapVersion",
+                  },
+                ],
+              },
+            ],
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.",
+        },
+      ],
+    },
+  },
 }
 `;
 
 exports[`Runtime Cluster Use NAT instances Matches Snapshot 1`] = `
-Object {
-  "Resources": Object {
-    "ClusterC2E21B66": Object {
+{
+  "Parameters": {
+    "BootstrapVersion": {
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+  },
+  "Resources": {
+    "ClusterC2E21B66": {
       "Type": "AWS::ECS::Cluster",
     },
-    "ClusterDefaultServiceDiscoveryNamespaceD29986FD": Object {
-      "Properties": Object {
+    "ClusterDefaultServiceDiscoveryNamespaceD29986FD": {
+      "Properties": {
         "Name": "private.domain",
-        "Vpc": Object {
+        "Vpc": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::ServiceDiscovery::PrivateDnsNamespace",
     },
-    "ClusterRouterLoadBalancer1D918095": Object {
-      "DependsOn": Array [
+    "ClusterRouterLoadBalancer1D918095": {
+      "DependsOn": [
         "ClusterVpcPublicSubnet1DefaultRoute62DA4B4B",
+        "ClusterVpcPublicSubnet1RouteTableAssociation0FBEF1F4",
         "ClusterVpcPublicSubnet2DefaultRoute97446C8A",
+        "ClusterVpcPublicSubnet2RouteTableAssociation8446B27D",
         "ClusterVpcPublicSubnet3DefaultRoute772CA282",
+        "ClusterVpcPublicSubnet3RouteTableAssociationD919DEF1",
       ],
-      "Properties": Object {
-        "LoadBalancerAttributes": Array [
-          Object {
+      "Properties": {
+        "LoadBalancerAttributes": [
+          {
             "Key": "deletion_protection.enabled",
             "Value": "false",
           },
         ],
         "Scheme": "internet-facing",
-        "SecurityGroups": Array [
-          Object {
-            "Fn::GetAtt": Array [
+        "SecurityGroups": [
+          {
+            "Fn::GetAtt": [
               "ClusterRouterLoadBalancerSecurityGroupE1E5F3D9",
               "GroupId",
             ],
           },
         ],
-        "Subnets": Array [
-          Object {
+        "Subnets": [
+          {
             "Ref": "ClusterVpcPublicSubnet1SubnetA9F7E0A5",
           },
-          Object {
+          {
             "Ref": "ClusterVpcPublicSubnet2Subnet059113C4",
           },
-          Object {
+          {
             "Ref": "ClusterVpcPublicSubnet3Subnet3AB4E59C",
           },
         ],
@@ -3053,17 +3190,17 @@ Object {
       },
       "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
     },
-    "ClusterRouterLoadBalancerHttpListener5011B408": Object {
-      "Properties": Object {
-        "DefaultActions": Array [
-          Object {
-            "TargetGroupArn": Object {
+    "ClusterRouterLoadBalancerHttpListener5011B408": {
+      "Properties": {
+        "DefaultActions": [
+          {
+            "TargetGroupArn": {
               "Ref": "ClusterRouterLoadBalancerHttpListenerEcsServiceGroup644FD2FA",
             },
             "Type": "forward",
           },
         ],
-        "LoadBalancerArn": Object {
+        "LoadBalancerArn": {
           "Ref": "ClusterRouterLoadBalancer1D918095",
         },
         "Port": 80,
@@ -3071,23 +3208,29 @@ Object {
       },
       "Type": "AWS::ElasticLoadBalancingV2::Listener",
     },
-    "ClusterRouterLoadBalancerHttpListenerEcsServiceGroup644FD2FA": Object {
-      "Properties": Object {
+    "ClusterRouterLoadBalancerHttpListenerEcsServiceGroup644FD2FA": {
+      "Properties": {
         "HealthCheckPath": "/ping",
         "Port": 80,
         "Protocol": "HTTP",
+        "TargetGroupAttributes": [
+          {
+            "Key": "stickiness.enabled",
+            "Value": "false",
+          },
+        ],
         "TargetType": "ip",
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
     },
-    "ClusterRouterLoadBalancerSecurityGroupE1E5F3D9": Object {
-      "Properties": Object {
+    "ClusterRouterLoadBalancerSecurityGroupE1E5F3D9": {
+      "Properties": {
         "GroupDescription": "Automatically created Security Group for ELB StackClusterRouterLoadBalancer49BEBF7D",
-        "SecurityGroupIngress": Array [
-          Object {
+        "SecurityGroupIngress": [
+          {
             "CidrIp": "0.0.0.0/0",
             "Description": "Allow from anyone on port 80",
             "FromPort": 80,
@@ -3095,24 +3238,24 @@ Object {
             "ToPort": 80,
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::SecurityGroup",
     },
-    "ClusterRouterLoadBalancerSecurityGrouptoStackClusterRouterServiceSecurityGroupDD1CDD3B805BD321E7": Object {
-      "Properties": Object {
+    "ClusterRouterLoadBalancerSecurityGrouptoStackClusterRouterServiceSecurityGroupDD1CDD3B805BD321E7": {
+      "Properties": {
         "Description": "Load balancer to target",
-        "DestinationSecurityGroupId": Object {
-          "Fn::GetAtt": Array [
+        "DestinationSecurityGroupId": {
+          "Fn::GetAtt": [
             "ClusterRouterServiceSecurityGroupCBEC2A56",
             "GroupId",
           ],
         },
         "FromPort": 80,
-        "GroupId": Object {
-          "Fn::GetAtt": Array [
+        "GroupId": {
+          "Fn::GetAtt": [
             "ClusterRouterLoadBalancerSecurityGroupE1E5F3D9",
             "GroupId",
           ],
@@ -3122,18 +3265,18 @@ Object {
       },
       "Type": "AWS::EC2::SecurityGroupEgress",
     },
-    "ClusterRouterNamespaceRecord89A640AB": Object {
-      "Properties": Object {
+    "ClusterRouterNamespaceRecord89A640AB": {
+      "Properties": {
         "Description": "Traefik router",
-        "DnsConfig": Object {
-          "DnsRecords": Array [
-            Object {
+        "DnsConfig": {
+          "DnsRecords": [
+            {
               "TTL": 60,
               "Type": "A",
             },
           ],
-          "NamespaceId": Object {
-            "Fn::GetAtt": Array [
+          "NamespaceId": {
+            "Fn::GetAtt": [
               "ClusterDefaultServiceDiscoveryNamespaceD29986FD",
               "Id",
             ],
@@ -3141,8 +3284,8 @@ Object {
           "RoutingPolicy": "MULTIVALUE",
         },
         "Name": "_router",
-        "NamespaceId": Object {
-          "Fn::GetAtt": Array [
+        "NamespaceId": {
+          "Fn::GetAtt": [
             "ClusterDefaultServiceDiscoveryNamespaceD29986FD",
             "Id",
           ],
@@ -3150,16 +3293,16 @@ Object {
       },
       "Type": "AWS::ServiceDiscovery::Service",
     },
-    "ClusterRouterRouterRecordpublicdomain2B490638": Object {
-      "Properties": Object {
-        "AliasTarget": Object {
-          "DNSName": Object {
-            "Fn::Join": Array [
+    "ClusterRouterRouterRecordpublicdomain2B490638": {
+      "Properties": {
+        "AliasTarget": {
+          "DNSName": {
+            "Fn::Join": [
               "",
-              Array [
+              [
                 "dualstack.",
-                Object {
-                  "Fn::GetAtt": Array [
+                {
+                  "Fn::GetAtt": [
                     "ClusterRouterLoadBalancer1D918095",
                     "DNSName",
                   ],
@@ -3167,8 +3310,8 @@ Object {
               ],
             ],
           },
-          "HostedZoneId": Object {
-            "Fn::GetAtt": Array [
+          "HostedZoneId": {
+            "Fn::GetAtt": [
               "ClusterRouterLoadBalancer1D918095",
               "CanonicalHostedZoneID",
             ],
@@ -3180,14 +3323,14 @@ Object {
       },
       "Type": "AWS::Route53::RecordSet",
     },
-    "ClusterRouterRouterTaskRoleE8B7AD7C": Object {
-      "Properties": Object {
-        "AssumeRolePolicyDocument": Object {
-          "Statement": Array [
-            Object {
+    "ClusterRouterRouterTaskRoleE8B7AD7C": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
               "Action": "sts:AssumeRole",
               "Effect": "Allow",
-              "Principal": Object {
+              "Principal": {
                 "Service": "ecs-tasks.amazonaws.com",
               },
             },
@@ -3195,12 +3338,12 @@ Object {
           "Version": "2012-10-17",
         },
         "Description": "Role that router service container assumes so that it communicate with ECS and EC2 APIs to auto-detect services (containers) to route traffic to",
-        "Policies": Array [
-          Object {
-            "PolicyDocument": Object {
-              "Statement": Array [
-                Object {
-                  "Action": Array [
+        "Policies": [
+          {
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Action": [
                     "ec2:DescribeInstances",
                     "ecs:ListClusters",
                     "ecs:DescribeClusters",
@@ -3221,16 +3364,16 @@ Object {
       },
       "Type": "AWS::IAM::Role",
     },
-    "ClusterRouterServiceA6DA0C86": Object {
-      "DependsOn": Array [
+    "ClusterRouterServiceA6DA0C86": {
+      "DependsOn": [
         "ClusterRouterLoadBalancerHttpListenerEcsServiceGroup644FD2FA",
         "ClusterRouterLoadBalancerHttpListener5011B408",
       ],
-      "Properties": Object {
-        "Cluster": Object {
+      "Properties": {
+        "Cluster": {
           "Ref": "ClusterC2E21B66",
         },
-        "DeploymentConfiguration": Object {
+        "DeploymentConfiguration": {
           "MaximumPercent": 200,
           "MinimumHealthyPercent": 50,
         },
@@ -3238,84 +3381,84 @@ Object {
         "EnableECSManagedTags": false,
         "HealthCheckGracePeriodSeconds": 60,
         "LaunchType": "FARGATE",
-        "LoadBalancers": Array [
-          Object {
+        "LoadBalancers": [
+          {
             "ContainerName": "Container",
             "ContainerPort": 80,
-            "TargetGroupArn": Object {
+            "TargetGroupArn": {
               "Ref": "ClusterRouterLoadBalancerHttpListenerEcsServiceGroup644FD2FA",
             },
           },
         ],
-        "NetworkConfiguration": Object {
-          "AwsvpcConfiguration": Object {
+        "NetworkConfiguration": {
+          "AwsvpcConfiguration": {
             "AssignPublicIp": "DISABLED",
-            "SecurityGroups": Array [
-              Object {
-                "Fn::GetAtt": Array [
+            "SecurityGroups": [
+              {
+                "Fn::GetAtt": [
                   "ClusterRouterServiceSecurityGroupCBEC2A56",
                   "GroupId",
                 ],
               },
             ],
-            "Subnets": Array [
-              Object {
+            "Subnets": [
+              {
                 "Ref": "ClusterVpcPrivateSubnet1SubnetA4EB481A",
               },
-              Object {
+              {
                 "Ref": "ClusterVpcPrivateSubnet2SubnetBD1ECB6E",
               },
-              Object {
+              {
                 "Ref": "ClusterVpcPrivateSubnet3Subnet2479B8E0",
               },
             ],
           },
         },
-        "ServiceRegistries": Array [
-          Object {
-            "RegistryArn": Object {
-              "Fn::GetAtt": Array [
+        "ServiceRegistries": [
+          {
+            "RegistryArn": {
+              "Fn::GetAtt": [
                 "ClusterRouterNamespaceRecord89A640AB",
                 "Arn",
               ],
             },
           },
         ],
-        "TaskDefinition": Object {
+        "TaskDefinition": {
           "Ref": "ClusterRouterTaskDefinition89C7182E",
         },
       },
       "Type": "AWS::ECS::Service",
     },
-    "ClusterRouterServiceSecurityGroupCBEC2A56": Object {
-      "Properties": Object {
+    "ClusterRouterServiceSecurityGroupCBEC2A56": {
+      "Properties": {
         "GroupDescription": "Stack/Cluster/Router/Service/SecurityGroup",
-        "SecurityGroupEgress": Array [
-          Object {
+        "SecurityGroupEgress": [
+          {
             "CidrIp": "0.0.0.0/0",
             "Description": "Allow all outbound traffic by default",
             "IpProtocol": "-1",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::SecurityGroup",
     },
-    "ClusterRouterServiceSecurityGroupfromStackClusterRouterLoadBalancerSecurityGroup5D5E07D38051C9CF5F": Object {
-      "Properties": Object {
+    "ClusterRouterServiceSecurityGroupfromStackClusterRouterLoadBalancerSecurityGroup5D5E07D38051C9CF5F": {
+      "Properties": {
         "Description": "Load balancer to target",
         "FromPort": 80,
-        "GroupId": Object {
-          "Fn::GetAtt": Array [
+        "GroupId": {
+          "Fn::GetAtt": [
             "ClusterRouterServiceSecurityGroupCBEC2A56",
             "GroupId",
           ],
         },
         "IpProtocol": "tcp",
-        "SourceSecurityGroupId": Object {
-          "Fn::GetAtt": Array [
+        "SourceSecurityGroupId": {
+          "Fn::GetAtt": [
             "ClusterRouterLoadBalancerSecurityGroupE1E5F3D9",
             "GroupId",
           ],
@@ -3324,62 +3467,62 @@ Object {
       },
       "Type": "AWS::EC2::SecurityGroupIngress",
     },
-    "ClusterRouterTaskDefinition89C7182E": Object {
-      "Properties": Object {
-        "ContainerDefinitions": Array [
-          Object {
-            "Environment": Array [
-              Object {
+    "ClusterRouterTaskDefinition89C7182E": {
+      "Properties": {
+        "ContainerDefinitions": [
+          {
+            "Environment": [
+              {
                 "Name": "TRAEFIK_ENTRYPOINTS_HTTP",
                 "Value": "true",
               },
-              Object {
+              {
                 "Name": "TRAEFIK_ENTRYPOINTS_HTTP_ADDRESS",
                 "Value": ":80",
               },
-              Object {
+              {
                 "Name": "TRAEFIK_LOG",
                 "Value": "true",
               },
-              Object {
+              {
                 "Name": "TRAEFIK_LOG_LEVEL",
                 "Value": "ERROR",
               },
-              Object {
+              {
                 "Name": "TRAEFIK_PING",
                 "Value": "true",
               },
-              Object {
+              {
                 "Name": "TRAEFIK_PING_ENTRYPOINT",
                 "Value": "http",
               },
-              Object {
+              {
                 "Name": "TRAEFIK_PROVIDERS_ECS",
                 "Value": "true",
               },
-              Object {
+              {
                 "Name": "TRAEFIK_PROVIDERS_ECS_REFRESHSECONDS",
                 "Value": "10",
               },
-              Object {
+              {
                 "Name": "TRAEFIK_PROVIDERS_ECS_CLUSTERS",
-                "Value": Object {
+                "Value": {
                   "Ref": "ClusterC2E21B66",
                 },
               },
-              Object {
+              {
                 "Name": "TRAEFIK_PROVIDERS_ECS_REGION",
-                "Value": Object {
+                "Value": {
                   "Ref": "AWS::Region",
                 },
               },
             ],
             "Essential": true,
             "Image": "traefik:2.4",
-            "LogConfiguration": Object {
+            "LogConfiguration": {
               "LogDriver": "awslogs",
-              "Options": Object {
-                "awslogs-group": Object {
+              "Options": {
+                "awslogs-group": {
                   "Ref": "ClusterRouterTaskDefinitionContainerLogGroupD0031984",
                 },
                 "awslogs-region": "us-east-1",
@@ -3387,8 +3530,8 @@ Object {
               },
             },
             "Name": "Container",
-            "PortMappings": Array [
-              Object {
+            "PortMappings": [
+              {
                 "ContainerPort": 80,
                 "HostPort": 80,
                 "Protocol": "tcp",
@@ -3397,8 +3540,8 @@ Object {
           },
         ],
         "Cpu": "256",
-        "ExecutionRoleArn": Object {
-          "Fn::GetAtt": Array [
+        "ExecutionRoleArn": {
+          "Fn::GetAtt": [
             "ClusterRouterTaskDefinitionExecutionRole68739FF3",
             "Arn",
           ],
@@ -3406,11 +3549,11 @@ Object {
         "Family": "StackClusterRouterTaskDefinition757F7833",
         "Memory": "512",
         "NetworkMode": "awsvpc",
-        "RequiresCompatibilities": Array [
+        "RequiresCompatibilities": [
           "FARGATE",
         ],
-        "TaskRoleArn": Object {
-          "Fn::GetAtt": Array [
+        "TaskRoleArn": {
+          "Fn::GetAtt": [
             "ClusterRouterRouterTaskRoleE8B7AD7C",
             "Arn",
           ],
@@ -3418,22 +3561,22 @@ Object {
       },
       "Type": "AWS::ECS::TaskDefinition",
     },
-    "ClusterRouterTaskDefinitionContainerLogGroupD0031984": Object {
+    "ClusterRouterTaskDefinitionContainerLogGroupD0031984": {
       "DeletionPolicy": "Retain",
-      "Properties": Object {
+      "Properties": {
         "RetentionInDays": 7,
       },
       "Type": "AWS::Logs::LogGroup",
       "UpdateReplacePolicy": "Retain",
     },
-    "ClusterRouterTaskDefinitionExecutionRole68739FF3": Object {
-      "Properties": Object {
-        "AssumeRolePolicyDocument": Object {
-          "Statement": Array [
-            Object {
+    "ClusterRouterTaskDefinitionExecutionRole68739FF3": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
               "Action": "sts:AssumeRole",
               "Effect": "Allow",
-              "Principal": Object {
+              "Principal": {
                 "Service": "ecs-tasks.amazonaws.com",
               },
             },
@@ -3443,18 +3586,18 @@ Object {
       },
       "Type": "AWS::IAM::Role",
     },
-    "ClusterRouterTaskDefinitionExecutionRoleDefaultPolicyBF8479E0": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": Array [
+    "ClusterRouterTaskDefinitionExecutionRoleDefaultPolicyBF8479E0": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
                 "logs:CreateLogStream",
                 "logs:PutLogEvents",
               ],
               "Effect": "Allow",
-              "Resource": Object {
-                "Fn::GetAtt": Array [
+              "Resource": {
+                "Fn::GetAtt": [
                   "ClusterRouterTaskDefinitionContainerLogGroupD0031984",
                   "Arn",
                 ],
@@ -3464,22 +3607,22 @@ Object {
           "Version": "2012-10-17",
         },
         "PolicyName": "ClusterRouterTaskDefinitionExecutionRoleDefaultPolicyBF8479E0",
-        "Roles": Array [
-          Object {
+        "Roles": [
+          {
             "Ref": "ClusterRouterTaskDefinitionExecutionRole68739FF3",
           },
         ],
       },
       "Type": "AWS::IAM::Policy",
     },
-    "ClusterVpcFAA3CEDF": Object {
-      "Properties": Object {
+    "ClusterVpcFAA3CEDF": {
+      "Properties": {
         "CidrBlock": "10.0.0.0/16",
         "EnableDnsHostnames": true,
         "EnableDnsSupport": true,
         "InstanceTenancy": "default",
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc",
           },
@@ -3487,10 +3630,10 @@ Object {
       },
       "Type": "AWS::EC2::VPC",
     },
-    "ClusterVpcIGW1E358A6E": Object {
-      "Properties": Object {
-        "Tags": Array [
-          Object {
+    "ClusterVpcIGW1E358A6E": {
+      "Properties": {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc",
           },
@@ -3498,22 +3641,22 @@ Object {
       },
       "Type": "AWS::EC2::InternetGateway",
     },
-    "ClusterVpcNatRoleCA58D681": Object {
-      "Properties": Object {
-        "AssumeRolePolicyDocument": Object {
-          "Statement": Array [
-            Object {
+    "ClusterVpcNatRoleCA58D681": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
               "Action": "sts:AssumeRole",
               "Effect": "Allow",
-              "Principal": Object {
+              "Principal": {
                 "Service": "ec2.amazonaws.com",
               },
             },
           ],
           "Version": "2012-10-17",
         },
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc",
           },
@@ -3521,561 +3664,588 @@ Object {
       },
       "Type": "AWS::IAM::Role",
     },
-    "ClusterVpcNatSecurityGroup694F2D23": Object {
-      "Properties": Object {
+    "ClusterVpcNatSecurityGroup694F2D23": {
+      "Properties": {
         "GroupDescription": "Security Group for NAT instances",
-        "SecurityGroupEgress": Array [
-          Object {
+        "SecurityGroupEgress": [
+          {
             "CidrIp": "0.0.0.0/0",
             "Description": "Allow all outbound traffic by default",
             "IpProtocol": "-1",
           },
         ],
-        "SecurityGroupIngress": Array [
-          Object {
+        "SecurityGroupIngress": [
+          {
             "CidrIp": "0.0.0.0/0",
             "Description": "from 0.0.0.0/0:ALL TRAFFIC",
             "IpProtocol": "-1",
           },
         ],
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::SecurityGroup",
     },
-    "ClusterVpcPrivateSubnet1DefaultRoute3B4D40DD": Object {
-      "Properties": Object {
+    "ClusterVpcPrivateSubnet1DefaultRoute3B4D40DD": {
+      "Properties": {
         "DestinationCidrBlock": "0.0.0.0/0",
-        "InstanceId": Object {
+        "InstanceId": {
           "Ref": "ClusterVpcPublicSubnet1NatInstanceB3E0F345",
         },
-        "RouteTableId": Object {
+        "RouteTableId": {
           "Ref": "ClusterVpcPrivateSubnet1RouteTable5AAEDA3F",
         },
       },
       "Type": "AWS::EC2::Route",
     },
-    "ClusterVpcPrivateSubnet1RouteTable5AAEDA3F": Object {
-      "Properties": Object {
-        "Tags": Array [
-          Object {
+    "ClusterVpcPrivateSubnet1RouteTable5AAEDA3F": {
+      "Properties": {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PrivateSubnet1",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::RouteTable",
     },
-    "ClusterVpcPrivateSubnet1RouteTableAssociation9B8A88D9": Object {
-      "Properties": Object {
-        "RouteTableId": Object {
+    "ClusterVpcPrivateSubnet1RouteTableAssociation9B8A88D9": {
+      "Properties": {
+        "RouteTableId": {
           "Ref": "ClusterVpcPrivateSubnet1RouteTable5AAEDA3F",
         },
-        "SubnetId": Object {
+        "SubnetId": {
           "Ref": "ClusterVpcPrivateSubnet1SubnetA4EB481A",
         },
       },
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
     },
-    "ClusterVpcPrivateSubnet1SubnetA4EB481A": Object {
-      "Properties": Object {
+    "ClusterVpcPrivateSubnet1SubnetA4EB481A": {
+      "Properties": {
         "AvailabilityZone": "dummy1a",
         "CidrBlock": "10.0.96.0/19",
         "MapPublicIpOnLaunch": false,
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "aws-cdk:subnet-name",
             "Value": "Private",
           },
-          Object {
+          {
             "Key": "aws-cdk:subnet-type",
             "Value": "Private",
           },
-          Object {
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PrivateSubnet1",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::Subnet",
     },
-    "ClusterVpcPrivateSubnet2DefaultRoute011666AF": Object {
-      "Properties": Object {
+    "ClusterVpcPrivateSubnet2DefaultRoute011666AF": {
+      "Properties": {
         "DestinationCidrBlock": "0.0.0.0/0",
-        "InstanceId": Object {
+        "InstanceId": {
           "Ref": "ClusterVpcPublicSubnet2NatInstance281C0FFE",
         },
-        "RouteTableId": Object {
+        "RouteTableId": {
           "Ref": "ClusterVpcPrivateSubnet2RouteTable73064A66",
         },
       },
       "Type": "AWS::EC2::Route",
     },
-    "ClusterVpcPrivateSubnet2RouteTable73064A66": Object {
-      "Properties": Object {
-        "Tags": Array [
-          Object {
+    "ClusterVpcPrivateSubnet2RouteTable73064A66": {
+      "Properties": {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PrivateSubnet2",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::RouteTable",
     },
-    "ClusterVpcPrivateSubnet2RouteTableAssociationFB21349E": Object {
-      "Properties": Object {
-        "RouteTableId": Object {
+    "ClusterVpcPrivateSubnet2RouteTableAssociationFB21349E": {
+      "Properties": {
+        "RouteTableId": {
           "Ref": "ClusterVpcPrivateSubnet2RouteTable73064A66",
         },
-        "SubnetId": Object {
+        "SubnetId": {
           "Ref": "ClusterVpcPrivateSubnet2SubnetBD1ECB6E",
         },
       },
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
     },
-    "ClusterVpcPrivateSubnet2SubnetBD1ECB6E": Object {
-      "Properties": Object {
+    "ClusterVpcPrivateSubnet2SubnetBD1ECB6E": {
+      "Properties": {
         "AvailabilityZone": "dummy1b",
         "CidrBlock": "10.0.128.0/19",
         "MapPublicIpOnLaunch": false,
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "aws-cdk:subnet-name",
             "Value": "Private",
           },
-          Object {
+          {
             "Key": "aws-cdk:subnet-type",
             "Value": "Private",
           },
-          Object {
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PrivateSubnet2",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::Subnet",
     },
-    "ClusterVpcPrivateSubnet3DefaultRoute90E9BC37": Object {
-      "Properties": Object {
+    "ClusterVpcPrivateSubnet3DefaultRoute90E9BC37": {
+      "Properties": {
         "DestinationCidrBlock": "0.0.0.0/0",
-        "InstanceId": Object {
+        "InstanceId": {
           "Ref": "ClusterVpcPublicSubnet3NatInstanceF2363CC0",
         },
-        "RouteTableId": Object {
+        "RouteTableId": {
           "Ref": "ClusterVpcPrivateSubnet3RouteTable941ABA3E",
         },
       },
       "Type": "AWS::EC2::Route",
     },
-    "ClusterVpcPrivateSubnet3RouteTable941ABA3E": Object {
-      "Properties": Object {
-        "Tags": Array [
-          Object {
+    "ClusterVpcPrivateSubnet3RouteTable941ABA3E": {
+      "Properties": {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PrivateSubnet3",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::RouteTable",
     },
-    "ClusterVpcPrivateSubnet3RouteTableAssociationB0D482EA": Object {
-      "Properties": Object {
-        "RouteTableId": Object {
+    "ClusterVpcPrivateSubnet3RouteTableAssociationB0D482EA": {
+      "Properties": {
+        "RouteTableId": {
           "Ref": "ClusterVpcPrivateSubnet3RouteTable941ABA3E",
         },
-        "SubnetId": Object {
+        "SubnetId": {
           "Ref": "ClusterVpcPrivateSubnet3Subnet2479B8E0",
         },
       },
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
     },
-    "ClusterVpcPrivateSubnet3Subnet2479B8E0": Object {
-      "Properties": Object {
+    "ClusterVpcPrivateSubnet3Subnet2479B8E0": {
+      "Properties": {
         "AvailabilityZone": "dummy1c",
         "CidrBlock": "10.0.160.0/19",
         "MapPublicIpOnLaunch": false,
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "aws-cdk:subnet-name",
             "Value": "Private",
           },
-          Object {
+          {
             "Key": "aws-cdk:subnet-type",
             "Value": "Private",
           },
-          Object {
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PrivateSubnet3",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::Subnet",
     },
-    "ClusterVpcPublicSubnet1DefaultRoute62DA4B4B": Object {
-      "DependsOn": Array [
+    "ClusterVpcPublicSubnet1DefaultRoute62DA4B4B": {
+      "DependsOn": [
         "ClusterVpcVPCGW47AC17E9",
       ],
-      "Properties": Object {
+      "Properties": {
         "DestinationCidrBlock": "0.0.0.0/0",
-        "GatewayId": Object {
+        "GatewayId": {
           "Ref": "ClusterVpcIGW1E358A6E",
         },
-        "RouteTableId": Object {
+        "RouteTableId": {
           "Ref": "ClusterVpcPublicSubnet1RouteTable5594A636",
         },
       },
       "Type": "AWS::EC2::Route",
     },
-    "ClusterVpcPublicSubnet1NatInstanceB3E0F345": Object {
-      "DependsOn": Array [
+    "ClusterVpcPublicSubnet1NatInstanceB3E0F345": {
+      "DependsOn": [
         "ClusterVpcNatRoleCA58D681",
       ],
-      "Properties": Object {
+      "Properties": {
         "AvailabilityZone": "dummy1a",
-        "IamInstanceProfile": Object {
+        "IamInstanceProfile": {
           "Ref": "ClusterVpcPublicSubnet1NatInstanceInstanceProfile74908BED",
         },
         "ImageId": "ami-1234",
         "InstanceType": "t3.micro",
-        "SecurityGroupIds": Array [
-          Object {
-            "Fn::GetAtt": Array [
+        "SecurityGroupIds": [
+          {
+            "Fn::GetAtt": [
               "ClusterVpcNatSecurityGroup694F2D23",
               "GroupId",
             ],
           },
         ],
         "SourceDestCheck": false,
-        "SubnetId": Object {
+        "SubnetId": {
           "Ref": "ClusterVpcPublicSubnet1SubnetA9F7E0A5",
         },
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PublicSubnet1/NatInstance",
           },
         ],
-        "UserData": Object {
+        "UserData": {
           "Fn::Base64": "#!/bin/bash",
         },
       },
       "Type": "AWS::EC2::Instance",
     },
-    "ClusterVpcPublicSubnet1NatInstanceInstanceProfile74908BED": Object {
-      "Properties": Object {
-        "Roles": Array [
-          Object {
+    "ClusterVpcPublicSubnet1NatInstanceInstanceProfile74908BED": {
+      "Properties": {
+        "Roles": [
+          {
             "Ref": "ClusterVpcNatRoleCA58D681",
           },
         ],
       },
       "Type": "AWS::IAM::InstanceProfile",
     },
-    "ClusterVpcPublicSubnet1RouteTable5594A636": Object {
-      "Properties": Object {
-        "Tags": Array [
-          Object {
+    "ClusterVpcPublicSubnet1RouteTable5594A636": {
+      "Properties": {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PublicSubnet1",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::RouteTable",
     },
-    "ClusterVpcPublicSubnet1RouteTableAssociation0FBEF1F4": Object {
-      "Properties": Object {
-        "RouteTableId": Object {
+    "ClusterVpcPublicSubnet1RouteTableAssociation0FBEF1F4": {
+      "Properties": {
+        "RouteTableId": {
           "Ref": "ClusterVpcPublicSubnet1RouteTable5594A636",
         },
-        "SubnetId": Object {
+        "SubnetId": {
           "Ref": "ClusterVpcPublicSubnet1SubnetA9F7E0A5",
         },
       },
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
     },
-    "ClusterVpcPublicSubnet1SubnetA9F7E0A5": Object {
-      "Properties": Object {
+    "ClusterVpcPublicSubnet1SubnetA9F7E0A5": {
+      "Properties": {
         "AvailabilityZone": "dummy1a",
         "CidrBlock": "10.0.0.0/19",
         "MapPublicIpOnLaunch": true,
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "aws-cdk:subnet-name",
             "Value": "Public",
           },
-          Object {
+          {
             "Key": "aws-cdk:subnet-type",
             "Value": "Public",
           },
-          Object {
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PublicSubnet1",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::Subnet",
     },
-    "ClusterVpcPublicSubnet2DefaultRoute97446C8A": Object {
-      "DependsOn": Array [
+    "ClusterVpcPublicSubnet2DefaultRoute97446C8A": {
+      "DependsOn": [
         "ClusterVpcVPCGW47AC17E9",
       ],
-      "Properties": Object {
+      "Properties": {
         "DestinationCidrBlock": "0.0.0.0/0",
-        "GatewayId": Object {
+        "GatewayId": {
           "Ref": "ClusterVpcIGW1E358A6E",
         },
-        "RouteTableId": Object {
+        "RouteTableId": {
           "Ref": "ClusterVpcPublicSubnet2RouteTable7B43F18C",
         },
       },
       "Type": "AWS::EC2::Route",
     },
-    "ClusterVpcPublicSubnet2NatInstance281C0FFE": Object {
-      "DependsOn": Array [
+    "ClusterVpcPublicSubnet2NatInstance281C0FFE": {
+      "DependsOn": [
         "ClusterVpcNatRoleCA58D681",
       ],
-      "Properties": Object {
+      "Properties": {
         "AvailabilityZone": "dummy1b",
-        "IamInstanceProfile": Object {
+        "IamInstanceProfile": {
           "Ref": "ClusterVpcPublicSubnet2NatInstanceInstanceProfile1BE7EA86",
         },
         "ImageId": "ami-1234",
         "InstanceType": "t3.micro",
-        "SecurityGroupIds": Array [
-          Object {
-            "Fn::GetAtt": Array [
+        "SecurityGroupIds": [
+          {
+            "Fn::GetAtt": [
               "ClusterVpcNatSecurityGroup694F2D23",
               "GroupId",
             ],
           },
         ],
         "SourceDestCheck": false,
-        "SubnetId": Object {
+        "SubnetId": {
           "Ref": "ClusterVpcPublicSubnet2Subnet059113C4",
         },
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PublicSubnet2/NatInstance",
           },
         ],
-        "UserData": Object {
+        "UserData": {
           "Fn::Base64": "#!/bin/bash",
         },
       },
       "Type": "AWS::EC2::Instance",
     },
-    "ClusterVpcPublicSubnet2NatInstanceInstanceProfile1BE7EA86": Object {
-      "Properties": Object {
-        "Roles": Array [
-          Object {
+    "ClusterVpcPublicSubnet2NatInstanceInstanceProfile1BE7EA86": {
+      "Properties": {
+        "Roles": [
+          {
             "Ref": "ClusterVpcNatRoleCA58D681",
           },
         ],
       },
       "Type": "AWS::IAM::InstanceProfile",
     },
-    "ClusterVpcPublicSubnet2RouteTable7B43F18C": Object {
-      "Properties": Object {
-        "Tags": Array [
-          Object {
+    "ClusterVpcPublicSubnet2RouteTable7B43F18C": {
+      "Properties": {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PublicSubnet2",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::RouteTable",
     },
-    "ClusterVpcPublicSubnet2RouteTableAssociation8446B27D": Object {
-      "Properties": Object {
-        "RouteTableId": Object {
+    "ClusterVpcPublicSubnet2RouteTableAssociation8446B27D": {
+      "Properties": {
+        "RouteTableId": {
           "Ref": "ClusterVpcPublicSubnet2RouteTable7B43F18C",
         },
-        "SubnetId": Object {
+        "SubnetId": {
           "Ref": "ClusterVpcPublicSubnet2Subnet059113C4",
         },
       },
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
     },
-    "ClusterVpcPublicSubnet2Subnet059113C4": Object {
-      "Properties": Object {
+    "ClusterVpcPublicSubnet2Subnet059113C4": {
+      "Properties": {
         "AvailabilityZone": "dummy1b",
         "CidrBlock": "10.0.32.0/19",
         "MapPublicIpOnLaunch": true,
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "aws-cdk:subnet-name",
             "Value": "Public",
           },
-          Object {
+          {
             "Key": "aws-cdk:subnet-type",
             "Value": "Public",
           },
-          Object {
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PublicSubnet2",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::Subnet",
     },
-    "ClusterVpcPublicSubnet3DefaultRoute772CA282": Object {
-      "DependsOn": Array [
+    "ClusterVpcPublicSubnet3DefaultRoute772CA282": {
+      "DependsOn": [
         "ClusterVpcVPCGW47AC17E9",
       ],
-      "Properties": Object {
+      "Properties": {
         "DestinationCidrBlock": "0.0.0.0/0",
-        "GatewayId": Object {
+        "GatewayId": {
           "Ref": "ClusterVpcIGW1E358A6E",
         },
-        "RouteTableId": Object {
+        "RouteTableId": {
           "Ref": "ClusterVpcPublicSubnet3RouteTable6810F4F3",
         },
       },
       "Type": "AWS::EC2::Route",
     },
-    "ClusterVpcPublicSubnet3NatInstanceF2363CC0": Object {
-      "DependsOn": Array [
+    "ClusterVpcPublicSubnet3NatInstanceF2363CC0": {
+      "DependsOn": [
         "ClusterVpcNatRoleCA58D681",
       ],
-      "Properties": Object {
+      "Properties": {
         "AvailabilityZone": "dummy1c",
-        "IamInstanceProfile": Object {
+        "IamInstanceProfile": {
           "Ref": "ClusterVpcPublicSubnet3NatInstanceInstanceProfileC2485B6D",
         },
         "ImageId": "ami-1234",
         "InstanceType": "t3.micro",
-        "SecurityGroupIds": Array [
-          Object {
-            "Fn::GetAtt": Array [
+        "SecurityGroupIds": [
+          {
+            "Fn::GetAtt": [
               "ClusterVpcNatSecurityGroup694F2D23",
               "GroupId",
             ],
           },
         ],
         "SourceDestCheck": false,
-        "SubnetId": Object {
+        "SubnetId": {
           "Ref": "ClusterVpcPublicSubnet3Subnet3AB4E59C",
         },
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PublicSubnet3/NatInstance",
           },
         ],
-        "UserData": Object {
+        "UserData": {
           "Fn::Base64": "#!/bin/bash",
         },
       },
       "Type": "AWS::EC2::Instance",
     },
-    "ClusterVpcPublicSubnet3NatInstanceInstanceProfileC2485B6D": Object {
-      "Properties": Object {
-        "Roles": Array [
-          Object {
+    "ClusterVpcPublicSubnet3NatInstanceInstanceProfileC2485B6D": {
+      "Properties": {
+        "Roles": [
+          {
             "Ref": "ClusterVpcNatRoleCA58D681",
           },
         ],
       },
       "Type": "AWS::IAM::InstanceProfile",
     },
-    "ClusterVpcPublicSubnet3RouteTable6810F4F3": Object {
-      "Properties": Object {
-        "Tags": Array [
-          Object {
+    "ClusterVpcPublicSubnet3RouteTable6810F4F3": {
+      "Properties": {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PublicSubnet3",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::RouteTable",
     },
-    "ClusterVpcPublicSubnet3RouteTableAssociationD919DEF1": Object {
-      "Properties": Object {
-        "RouteTableId": Object {
+    "ClusterVpcPublicSubnet3RouteTableAssociationD919DEF1": {
+      "Properties": {
+        "RouteTableId": {
           "Ref": "ClusterVpcPublicSubnet3RouteTable6810F4F3",
         },
-        "SubnetId": Object {
+        "SubnetId": {
           "Ref": "ClusterVpcPublicSubnet3Subnet3AB4E59C",
         },
       },
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
     },
-    "ClusterVpcPublicSubnet3Subnet3AB4E59C": Object {
-      "Properties": Object {
+    "ClusterVpcPublicSubnet3Subnet3AB4E59C": {
+      "Properties": {
         "AvailabilityZone": "dummy1c",
         "CidrBlock": "10.0.64.0/19",
         "MapPublicIpOnLaunch": true,
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "aws-cdk:subnet-name",
             "Value": "Public",
           },
-          Object {
+          {
             "Key": "aws-cdk:subnet-type",
             "Value": "Public",
           },
-          Object {
+          {
             "Key": "Name",
             "Value": "Stack/Cluster/Vpc/PublicSubnet3",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::Subnet",
     },
-    "ClusterVpcVPCGW47AC17E9": Object {
-      "Properties": Object {
-        "InternetGatewayId": Object {
+    "ClusterVpcVPCGW47AC17E9": {
+      "Properties": {
+        "InternetGatewayId": {
           "Ref": "ClusterVpcIGW1E358A6E",
         },
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "ClusterVpcFAA3CEDF",
         },
       },
       "Type": "AWS::EC2::VPCGatewayAttachment",
+    },
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                  ],
+                  {
+                    "Ref": "BootstrapVersion",
+                  },
+                ],
+              },
+            ],
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.",
+        },
+      ],
     },
   },
 }

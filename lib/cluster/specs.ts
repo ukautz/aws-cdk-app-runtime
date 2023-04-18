@@ -1,8 +1,5 @@
-import * as cdk from '@aws-cdk/core';
-import * as ec2 from '@aws-cdk/aws-ec2';
-import * as ecs from '@aws-cdk/aws-ecs';
-import * as route53 from '@aws-cdk/aws-route53';
-import * as servicediscovery from '@aws-cdk/aws-servicediscovery';
+import { aws_ec2 as ec2, aws_ecs as ecs, aws_servicediscovery as servicediscovery } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
 import { keys as compiledKeysOf } from 'ts-transformer-keys';
 import { SpecUtil } from '../util/spec';
 import { RouterSpecs } from './router';
@@ -76,19 +73,19 @@ export interface Specs extends RouterSpecs {
 /**
  * Names of keys in the Runtime Cluster Specification
  */
-export const specKeys = compiledKeysOf<Specs>().sort();
+export const specKeys = compiledKeysOf<Specs>().sort() as Array<string>;
 
 export class Specs implements Specs {
   static make = (generator?: (prop: string) => string): Specs => SpecUtil.make<Specs>(specKeys, generator);
-  static fromContext = (scope: cdk.Construct, prefix?: string): Specs => SpecUtil.fromContext(specKeys, scope, prefix);
-  static fromSsm = (scope: cdk.Construct, prefix?: string): Specs => SpecUtil.fromSsm<Specs>(specKeys, scope, prefix);
-  static toSsm = (scope: cdk.Construct, prefix: string, specs: Specs, secure?: boolean): void =>
-    SpecUtil.toSsm<Specs>(scope, prefix, specs, secure);
+  static fromContext = (scope: Construct, prefix?: string): Specs => SpecUtil.fromContext(specKeys, scope, prefix);
+  static fromSsm = (scope: Construct, prefix?: string): Specs => SpecUtil.fromSsm<Specs>(specKeys, scope, prefix);
+  static toSsm = (scope: Construct, prefix: string, specs: Specs): void =>
+    SpecUtil.toSsm<Specs>(specKeys, scope, prefix, specs);
 
   /**
    * Loads VPC defined in cluster specs
    */
-  static lookupVpc = (scope: cdk.Construct, id: string, specs: Specs): ec2.IVpc =>
+  static lookupVpc = (scope: Construct, id: string, specs: Specs): ec2.IVpc =>
     ec2.Vpc.fromLookup(scope, id, {
       vpcId: specs.vpcId,
     });
@@ -96,7 +93,7 @@ export class Specs implements Specs {
   /**
    * Loads ECS cluster defined in cluster specs
    */
-  static lookupCluster = (scope: cdk.Construct, id: string, specs: Specs, vpc?: ec2.IVpc): ecs.ICluster =>
+  static lookupCluster = (scope: Construct, id: string, specs: Specs, vpc?: ec2.IVpc): ecs.ICluster =>
     ecs.Cluster.fromClusterAttributes(scope, id, {
       clusterName: specs.clusterName,
       securityGroups: [],
@@ -106,10 +103,6 @@ export class Specs implements Specs {
   /**
    * Loads cluster cloudmap / service discovery namespace (for private domain)
    */
-  static lookupPrivateNamespace = (
-    scope: cdk.Construct,
-    id: string,
-    specs: Specs
-  ): servicediscovery.IPrivateDnsNamespace =>
+  static lookupPrivateNamespace = (scope: Construct, id: string, specs: Specs): servicediscovery.IPrivateDnsNamespace =>
     servicediscovery.PrivateDnsNamespace.fromPrivateDnsNamespaceAttributes(scope, id, specs);
 }

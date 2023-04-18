@@ -1,21 +1,23 @@
-import * as cdk from '@aws-cdk/core';
-import * as acm from '@aws-cdk/aws-certificatemanager';
-import * as ec2 from '@aws-cdk/aws-ec2';
-import * as ecs from '@aws-cdk/aws-ecs';
-import * as route53 from '@aws-cdk/aws-route53';
-import * as servicediscovery from '@aws-cdk/aws-servicediscovery';
-import '@aws-cdk/assert/jest';
+import * as cdk from 'aws-cdk-lib';
+import {
+  aws_certificatemanager as acm,
+  aws_ec2 as ec2,
+  aws_ecs as ecs,
+  aws_route53 as route53,
+  aws_servicediscovery as servicediscovery,
+} from 'aws-cdk-lib';
+import { Template } from 'aws-cdk-lib/assertions';
 import { Router, RouterProps } from '../../lib/cluster/router';
 import { expectSnapshot } from '../util';
-import { countResources } from '@aws-cdk/assert';
 
 describe('Cluster Router', () => {
   describe('Per Default', () => {
     const stack = setupStack();
+    const template = Template.fromStack(stack);
 
-    expectSnapshot(stack);
-    expectEcsService(stack);
-    expectLoadBalancer(stack, 80);
+    expectSnapshot(template);
+    expectEcsService(template);
+    expectLoadBalancer(template, 80);
   });
 
   describe('Provides HTTPS endpoint', () => {
@@ -24,9 +26,10 @@ describe('Cluster Router', () => {
         certificate: acm.Certificate.fromCertificateArn(infra.stack, 'id', 'arn:of:cert'),
       };
     });
-    expectSnapshot(stack);
-    expectEcsService(stack);
-    expectLoadBalancer(stack, 80, 443);
+    const template = Template.fromStack(stack);
+    expectSnapshot(template);
+    expectEcsService(template);
+    expectLoadBalancer(template, 80, 443);
   });
 
   describe('Enforces HTTPS', () => {
@@ -36,11 +39,12 @@ describe('Cluster Router', () => {
         enforceHttps: true,
       };
     });
-    expectSnapshot(stack);
-    expectEcsService(stack);
-    expectLoadBalancer(stack, 80, 443);
+    const template = Template.fromStack(stack);
+    expectSnapshot(template);
+    expectEcsService(template);
+    expectLoadBalancer(template, 80, 443);
     test('Requests to HTTP are redirect HTTPS', () => {
-      expect(stack).toHaveResource('AWS::ElasticLoadBalancingV2::Listener', {
+      template.hasResourceProperties('AWS::ElasticLoadBalancingV2::Listener', {
         Port: 80,
         DefaultActions: [
           {
@@ -57,7 +61,7 @@ describe('Cluster Router', () => {
   });
 
   describe('Sizes CPU and Memory resources', () => {
-    const stack = setupStack((infra) => {
+    const stack = setupStack((_) => {
       return {
         resources: {
           cpu: 1234,
@@ -65,11 +69,12 @@ describe('Cluster Router', () => {
         },
       };
     });
-    expectSnapshot(stack);
-    expectEcsService(stack);
-    expectLoadBalancer(stack, 80);
+    const template = Template.fromStack(stack);
+    expectSnapshot(template);
+    expectEcsService(template);
+    expectLoadBalancer(template, 80);
     test('Sets CPU and Memory as requested', () => {
-      expect(stack).toHaveResource('AWS::ECS::TaskDefinition', {
+      template.hasResourceProperties('AWS::ECS::TaskDefinition', {
         Cpu: '1234',
         Memory: '2345',
       });
@@ -77,7 +82,7 @@ describe('Cluster Router', () => {
   });
 
   describe('Implements scaling', () => {
-    const stack = setupStack((infra) => {
+    const stack = setupStack((_) => {
       return {
         resources: {
           scaling: {
@@ -98,19 +103,20 @@ describe('Cluster Router', () => {
         },
       };
     });
-    expectSnapshot(stack);
-    expectEcsService(stack);
-    expectLoadBalancer(stack, 80);
+    const template = Template.fromStack(stack);
+    expectSnapshot(template);
+    expectEcsService(template);
+    expectLoadBalancer(template, 80);
 
     test('Scaling constraints are in place', () => {
-      expect(stack).toHaveResource('AWS::ApplicationAutoScaling::ScalableTarget', {
+      template.hasResourceProperties('AWS::ApplicationAutoScaling::ScalableTarget', {
         MinCapacity: 5,
         MaxCapacity: 10,
       });
     });
 
     test('CPU Scaling policy in place', () => {
-      expect(stack).toHaveResource('AWS::ApplicationAutoScaling::ScalingPolicy', {
+      template.hasResourceProperties('AWS::ApplicationAutoScaling::ScalingPolicy', {
         TargetTrackingScalingPolicyConfiguration: {
           PredefinedMetricSpecification: {
             PredefinedMetricType: 'ECSServiceAverageCPUUtilization',
@@ -121,7 +127,7 @@ describe('Cluster Router', () => {
     });
 
     test('Memory Scaling policy in place', () => {
-      expect(stack).toHaveResource('AWS::ApplicationAutoScaling::ScalingPolicy', {
+      template.hasResourceProperties('AWS::ApplicationAutoScaling::ScalingPolicy', {
         TargetTrackingScalingPolicyConfiguration: {
           PredefinedMetricSpecification: {
             PredefinedMetricType: 'ECSServiceAverageMemoryUtilization',
@@ -133,15 +139,16 @@ describe('Cluster Router', () => {
   });
 
   describe('Protects load balancer with header condition', () => {
-    const stack = setupStack((infra) => {
+    const stack = setupStack((_) => {
       return {
         requireHeader: { name: 'x-foo-bar', values: ['baz', 'zoing'] },
       };
     });
-    expectSnapshot(stack);
-    expectEcsService(stack);
-    expect(stack).toCountResources('AWS::ElasticLoadBalancingV2::Listener', 1);
-    expect(stack).toHaveResource('AWS::ElasticLoadBalancingV2::Listener', {
+    const template = Template.fromStack(stack);
+    expectSnapshot(template);
+    expectEcsService(template);
+    template.resourceCountIs('AWS::ElasticLoadBalancingV2::Listener', 1);
+    template.hasResourceProperties('AWS::ElasticLoadBalancingV2::Listener', {
       Port: 80,
       DefaultActions: [
         {
@@ -154,8 +161,8 @@ describe('Cluster Router', () => {
         },
       ],
     });
-    expect(stack).toCountResources('AWS::ElasticLoadBalancingV2::ListenerRule', 1);
-    expect(stack).toHaveResource('AWS::ElasticLoadBalancingV2::ListenerRule', {
+    template.resourceCountIs('AWS::ElasticLoadBalancingV2::ListenerRule', 1);
+    template.hasResourceProperties('AWS::ElasticLoadBalancingV2::ListenerRule', {
       Priority: 1,
       Conditions: [
         {
@@ -170,26 +177,26 @@ describe('Cluster Router', () => {
   });
 });
 
-function expectEcsService(stack: cdk.Stack) {
+function expectEcsService(template: Template) {
   test('Task definition is present', () => {
-    expect(stack).toCountResources('AWS::ECS::TaskDefinition', 1);
+    template.resourceCountIs('AWS::ECS::TaskDefinition', 1);
   });
   test('ECS Fargate service is defined', () => {
-    expect(stack).toHaveResource('AWS::ECS::Service', {
+    template.hasResourceProperties('AWS::ECS::Service', {
       LaunchType: 'FARGATE',
     });
   });
 }
 
-function expectLoadBalancer(stack: cdk.Stack, ...ports: number[]) {
+function expectLoadBalancer(template: Template, ...ports: number[]) {
   test('With Load balancer setup', () => {
-    expect(stack).toHaveResource('AWS::ElasticLoadBalancingV2::LoadBalancer');
+    template.resourceCountIs('AWS::ElasticLoadBalancingV2::LoadBalancer', 1);
     ports.forEach((port) => {
-      expect(stack).toHaveResource('AWS::ElasticLoadBalancingV2::Listener', {
+      template.hasResourceProperties('AWS::ElasticLoadBalancingV2::Listener', {
         Port: port,
       });
     });
-    expect(stack).toCountResources('AWS::ElasticLoadBalancingV2::Listener', ports.length);
+    template.resourceCountIs('AWS::ElasticLoadBalancingV2::Listener', ports.length);
   });
 }
 

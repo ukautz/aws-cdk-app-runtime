@@ -1,4 +1,4 @@
-export interface ComponentSpecs {
+export interface ComponentSpecs extends Record<string, string> {
   /**
    * Name of the cluster that this component runs in
    */

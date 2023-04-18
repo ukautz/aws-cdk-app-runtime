@@ -1,11 +1,10 @@
-import * as cdk from '@aws-cdk/core';
-import * as ec2 from '@aws-cdk/aws-ec2';
-import * as events from '@aws-cdk/aws-events';
-import * as targets from '@aws-cdk/aws-events-targets';
+import { aws_ec2 as ec2, aws_events as events, aws_events_targets as targets } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
+import { ecsLogDriver } from '../util/logging';
 import { Component, ComponentProps, secretsFromProps } from './component';
 import { TaskSpecs } from './task-specs';
-import { ecsLogDriver } from '../util/logging';
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface TaskProps extends ComponentProps {}
 
 /**
@@ -15,7 +14,7 @@ export abstract class Task extends Component<TaskProps> implements ec2.IConnecta
   public readonly securityGroup: ec2.SecurityGroup;
   public readonly concurrency: number;
 
-  constructor(scope: cdk.Construct, id: string, props: TaskProps) {
+  constructor(scope: Construct, id: string, props: TaskProps) {
     super(scope, id, props);
 
     const scaling = this.resources.scaling;
@@ -77,14 +76,14 @@ export interface ScheduledTaskProps extends TaskProps {
 export class ScheduledTask extends Task {
   public readonly scheduledTask: targets.EcsTask;
 
-  constructor(scope: cdk.Construct, id: string, props: ScheduledTaskProps) {
+  constructor(scope: Construct, id: string, props: ScheduledTaskProps) {
     super(scope, id, props);
     this.scheduledTask = new targets.EcsTask({
       cluster: this.cluster,
       taskDefinition: this.taskDefinition,
       taskCount: this.concurrency,
       subnetSelection: {
-        subnetType: ec2.SubnetType.PRIVATE,
+        subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
       },
       securityGroups: [this.securityGroup],
     });

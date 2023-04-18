@@ -1,4 +1,3 @@
-import '@aws-cdk/assert/jest';
 import { TaskSpecs, taskSpecKeys } from '../../lib/service';
 import { assertSpecs } from '../util/specs.suite';
 

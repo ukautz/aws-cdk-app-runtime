@@ -1,4 +1,3 @@
-import '@aws-cdk/assert/jest';
 import { Specs as ClusterSpecs, specKeys as clusterSpecKeys } from '../../lib/cluster/specs';
 import { assertSpecs } from '../util/specs.suite';
 

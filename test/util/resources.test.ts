@@ -1,4 +1,3 @@
-import '@aws-cdk/assert/jest';
 import { Resources, ResourcesProps } from '../../lib/util/resources';
 
 describe('Resources', () => {
