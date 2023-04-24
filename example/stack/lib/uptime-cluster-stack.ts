@@ -1,7 +1,7 @@
-import * as cdk from '@aws-cdk/core';
-import * as route53 from '@aws-cdk/aws-route53';
 import * as appruntime from '@ukautz/aws-cdk-app-runtime';
 import { contextOf } from '@ukautz/aws-cdk-envcontext';
+import * as cdk from 'aws-cdk-lib';
+import { Construct } from 'constructs';
 
 const parseRouterSecret = (secret: string | undefined): { name: string; values: string[] } | undefined => {
   if (!secret) return undefined;
@@ -11,7 +11,7 @@ const parseRouterSecret = (secret: string | undefined): { name: string; values: 
 };
 
 export class UptimeClusterStack extends cdk.Stack {
-  constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
+  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
     const context = contextOf(this);
@@ -24,7 +24,7 @@ export class UptimeClusterStack extends cdk.Stack {
       hostedZone: context.may('hostedZone'),
       certificate: true,
       maxAzs: parseInt(context.may('maxAzs') ?? '2'),
-      natInstanceType: context.may('natInstanceType'),
+      natInstanceType: context.may('natInstanceType', 't3.nano'),
       routerProps: {
         logLevel: 'DEBUG',
         requireHeader: routerSecret,

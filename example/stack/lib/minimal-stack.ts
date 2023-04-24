@@ -1,11 +1,11 @@
-import * as cdk from '@aws-cdk/core';
-import { DatabaseInstance, DatabaseInstanceEngine, MysqlEngineVersion } from '@aws-cdk/aws-rds';
-import { Port } from '@aws-cdk/aws-ec2';
 import { Cluster, Service } from '@ukautz/aws-cdk-app-runtime';
+import * as cdk from 'aws-cdk-lib';
+import { aws_ec2 as ec2, aws_rds as rds } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
 import * as path from 'path';
 
 export class MinimalStack extends cdk.Stack {
-  constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
+  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
     const publicDomain = this.node.tryGetContext('publicDomain');
     if (!publicDomain) {
@@ -24,12 +24,12 @@ export class MinimalStack extends cdk.Stack {
       public: true,
     });
 
-    const database = new DatabaseInstance(this, 'Database', {
-      engine: DatabaseInstanceEngine.mysql({
-        version: MysqlEngineVersion.VER_8_0_23,
+    const database = new rds.DatabaseInstance(this, 'Database', {
+      engine: rds.DatabaseInstanceEngine.mysql({
+        version: rds.MysqlEngineVersion.VER_8_0_23,
       }),
       vpc: cluster.vpc,
     });
-    database.connections.allowFrom(service, Port.tcp(3306));
+    database.connections.allowFrom(service, ec2.Port.tcp(3306));
   }
 }
