@@ -1,15 +1,15 @@
-import * as cdk from '@aws-cdk/core';
-import * as ec2 from '@aws-cdk/aws-ec2';
-import * as dynamodb from '@aws-cdk/aws-dynamodb';
 import * as appruntime from '@ukautz/aws-cdk-app-runtime';
 import { contextOf } from '@ukautz/aws-cdk-envcontext';
+import * as cdk from 'aws-cdk-lib';
+import { aws_dynamodb as dynamodb, aws_ec2 as ec2 } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
 import * as path from 'path';
 
 const defaultServiceResources = 'cpu: 256, memory: 512, fixed: 1';
 const defaultMonitorResources = 'cpu: 256, memory: 512, concurrent: 1';
 
 export class UptimeApplicationsStack extends cdk.Stack {
-  constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
+  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
     const context = contextOf(this);

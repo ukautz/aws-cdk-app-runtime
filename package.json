@@ -9,19 +9,18 @@
   "publishConfig": {
     "access": "public"
   },
-  "main": "dist/lib/index.js",
-  "types": "dist/lib/index.d.ts",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "scripts": {
     "build": "ttsc",
     "watch": "ttsc -w",
     "test": "jest",
     "test-update": "jest -u",
-    "clean": "find test/ \\( -name \"*.js\" -or -name \"*.d.ts\" \\) -delete && find lib/ \\( -name \"*.js\" -or -name \"*.d.ts\" \\) -delete",
-    "create-schema": "npx typescript-json-schema \"lib/specs.ts\" ClusterSpecs",
-    "package": "tar zcvf app-runtime-library.$(cat package.json | jq .version -r).tgz --transform 's+^+package/+' package.json dist/"
+    "clean": "for d in lib test; do find $d/ \\( -name '*.js' -or -name '*.d.ts' \\) -delete; done",
+    "clean-build": "npm run clean && npm run build",
+    "create-schema": "npx typescript-json-schema \"lib/specs.ts\" ClusterSpecs"
   },
   "devDependencies": {
-    
     "@aws-cdk/cloud-assembly-schema": "2.74.0",
     "@types/jest": "^29.4.0",
     "@types/node": "18.14.6",
