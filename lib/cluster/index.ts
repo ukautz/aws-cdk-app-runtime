@@ -1,3 +1,3 @@
 export * from './cluster';
 export * from './router';
-export { specKeys as clusterSpecKeys, Specs as ClusterSpecs } from './specs';
+export { Specs as ClusterSpecs, specKeys as clusterSpecKeys } from './specs';
